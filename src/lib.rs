@@ -15,7 +15,8 @@
  *  [x] 搜索歌曲;
  *  [x] 以表格形式显示歌曲搜索列表含名称、歌手、大小、格式等信息;
  *  [x] 选择歌曲;
- *  [ ] 搜索不到结果给予提示；
+ *  [x] 搜索不到结果给予提示；
+ *  [x] 部分输出高亮显示；
  *  [ ] 已下载覆盖提示；
  *  [ ] 下载歌曲并显示下载进度;
  *  [ ] 配置分离;
@@ -36,6 +37,7 @@ use serde::Deserialize;
 use serde_json::Value;
 use std::error::Error;
 use url::Url;
+use yansi::Paint;
 
 type MusdResult<T> = Result<T, Box<dyn Error>>;
 
@@ -49,8 +51,14 @@ pub async fn search(search: &str) -> MusdResult<Vec<Song>> {
     // println!("Current search url {}", url.as_str());
     let resp = reqwest::get(url.as_str()).await?.text().await?;
     let val: Value = serde_json::from_str(&resp)?;
+    let result = &val["songResultData"]["result"];
+
+    if result.to_string() == "null".to_owned() {
+        println!("Can not find {} related musics! Bye ...", Paint::green(search).bold());
+        std::process::exit(0);
+    }
     // let songs = val["songResultData"]["result"].as_array().unwrap();
-    let songs = Vec::<Song>::deserialize(&val["songResultData"]["result"])?;
+    let songs = Vec::<Song>::deserialize(result)?;
     // println!("{:#?}", songs);
     Ok(songs)
 }
@@ -95,10 +103,10 @@ pub fn choose_music(songs: Vec<Song>) -> MusdResult<()> {
         .unwrap();
 
     // println!("You select {:#?}", sq_songs[selection]);
-    println!("Start to download {}!", selections[selection]);
+    // println!("Start to download {}!", Paint::green(&selections[selection]));
 
     if let Err(e) = download::download(sq_songs[selection]) {
-        eprintln!("[ERROR]: {}", e);
+        eprintln!("[ERROR]: {}", Paint::red(e));
         std::process::exit(2);
     }
     Ok(())

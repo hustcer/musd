@@ -4,15 +4,20 @@
  * Description: A CLI App to search and download musics
  */
 use clap::Parser;
+use yansi::Paint;
 
 fn main() {
     let args = musd::Args::parse();
-    println!("Start download the music and output to `{}`!", args.output);
+    // Disable coloring by `CLICOLOR` env variable
+    if let Ok(true) = std::env::var("CLICOLOR").map(|v| v == "0") {
+        Paint::disable();
+    }
+    println!("Start downloading the music and output to `{}`!", Paint::green(args.output).bold());
     // 'music' values: Some(["someone", "like", "you"])
     // println!("'music' values: {:?}", args.music);
 
     if let Err(e) = musd::search(&args.music.join(" ")).and_then(musd::choose_music) {
-        eprintln!("[ERROR]: {}", e);
+        eprintln!("[ERROR]: {}", Paint::red(e));
         std::process::exit(1);
     }
 }

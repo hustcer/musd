@@ -9,6 +9,7 @@ use std::io::copy;
 use std::path::Path;
 use thiserror::Error;
 use url::Url;
+use yansi::Paint;
 
 type MusdResult<T> = Result<T, MusdError>;
 
@@ -58,9 +59,9 @@ pub async fn download(song: &Song) -> MusdResult<()> {
 
         let extension = Path::new(fname).extension().unwrap().to_str().unwrap();
         let dest = format!("{}-{}.{extension}", song.name, song.singers[0].name);
-        println!("The music to download: '{:?}'", dest);
+        println!("The music to download: '{:?}'", Paint::green(&dest));
         let dest = path.join(dest);
-        println!("Will be located under: '{:?}'", dest);
+        println!("Will be located under: '{:?}'", Paint::green(&dest));
         File::create(dest)?
     };
     let content = response.text().await?;
