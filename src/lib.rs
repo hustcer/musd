@@ -9,11 +9,13 @@
  *  4. Iterating through an serde_json::Value: https://github.com/serde-rs/json/issues/417
  *  5. https://pd.musicapp.migu.cn/MIGUM3.0/v1.0/content/search_all.do?text=传奇&pageSize=1&searchSwitch={song:1}
  *  6. https://rust-lang-nursery.github.io/rust-cookbook/web/clients/download.html
+ *  7. https://docs.rs/url/latest/url/index.html
  *
  * TODO:
  *  [x] 搜索歌曲;
  *  [x] 以表格形式显示歌曲搜索列表含名称、歌手、大小、格式等信息;
  *  [x] 选择歌曲;
+ *  [ ] 搜索不到结果给予提示；
  *  [ ] 下载歌曲并显示下载进度;
  *  [ ] 配置分离;
  *  [ ] 代码模块化重构;
@@ -22,7 +24,12 @@
  *  [ ] 国际化文案显示;
  *  [ ] 确保 Mac & Windows 下均可使用;
  */
-use clap::Parser;
+mod def;
+mod download;
+
+pub use def::*;
+
+use crate::def::Song;
 use dialoguer::{theme::ColorfulTheme, Select};
 use serde::Deserialize;
 use serde_json::Value;
@@ -31,78 +38,14 @@ use url::Url;
 
 type MusdResult<T> = Result<T, Box<dyn Error>>;
 
-/// A CLI App to search and download musics
-#[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
-pub struct Args {
-    /// The path you want to save the downloaded music to
-    #[clap(short, long, default_value = ".")]
-    pub output: String,
-
-    /// The music or singer name to search for future downloading
-    pub music: Vec<String>,
-}
-
-#[allow(dead_code)]
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Song {
-    name: String,
-    singers: Vec<Singer>,
-    new_rate_formats: Vec<MusicFormat>,
-}
-
-#[allow(dead_code)]
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct Singer {
-    id: String,
-    name: String,
-}
-
-impl std::fmt::Display for Singer {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "({})", self.name)
-    }
-}
-
-#[allow(dead_code)]
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct MusicFormat {
-    format_type: String,
-
-    #[serde(default = "default_string")]
-    url: String,
-
-    #[serde(default = "default_string")]
-    ios_url: String,
-
-    #[serde(default = "default_string")]
-    android_url: String,
-
-    #[serde(default = "default_size")]
-    size: String,
-
-    #[serde(default = "default_string")]
-    file_type: String,
-}
-
-fn default_string() -> String {
-    "".to_string()
-}
-
-fn default_size() -> String {
-    "0".to_string()
-}
-
 #[tokio::main]
 pub async fn search(search: &str) -> MusdResult<Vec<Song>> {
     let mut url = Url::parse("https://pd.musicapp.migu.cn/MIGUM3.0/v1.0/content/search_all.do")?;
-    let mut query = format!("text={0}&pageSize=1", search);
-    query.push_str("&searchSwitch={song:1}");
-    url.set_query(Some(&query));
-    // println!("Current search url {}", url.as_str());
+    url.query_pairs_mut()
+        .append_pair("text", search)
+        .append_pair("pageSize", "1")
+        .append_pair("searchSwitch", "{song:1}");
+    println!("Current search url {}", url.as_str());
     let resp = reqwest::get(url.as_str()).await?.text().await?;
     let val: Value = serde_json::from_str(&resp)?;
     // let songs = val["songResultData"]["result"].as_array().unwrap();
@@ -147,7 +90,8 @@ pub fn choose_music(songs: Vec<Song>) -> MusdResult<()> {
         .interact()
         .unwrap();
 
-    println!("You select {:#?}", sq_songs[selection]);
+    // println!("You select {:#?}", sq_songs[selection]);
     println!("Start to download {}!", selections[selection]);
+    download::download(sq_songs[selection]);
     Ok(())
 }
