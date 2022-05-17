@@ -5,7 +5,8 @@
  */
 use crate::def::{MusdResult, Song};
 use std::fs::File;
-use std::io::copy;
+use std::io::prelude::*;
+use std::io::BufWriter;
 use std::path::Path;
 use url::Url;
 use yansi::Paint;
@@ -61,12 +62,14 @@ pub async fn download(song: &Song) -> MusdResult<()> {
 
     let response = reqwest::get(download_url.as_str()).await?;
 
-    let mut dest = {
+    let dest = {
         println!("The music to download: {:?}", Paint::green(&dest_file));
         println!("Will be located under: {:?}", Paint::green(&dest_path));
         File::create(dest_path)?
     };
-    let content = response.text().await?;
-    copy(&mut content.as_bytes(), &mut dest)?;
+    let content = response.bytes().await?;
+    let mut buffer = BufWriter::new(dest);
+    buffer.write_all(&content[..])?;
+    buffer.flush()?;
     Ok(())
 }

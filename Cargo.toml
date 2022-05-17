@@ -1,7 +1,13 @@
 [package]
-name = "musd"
-version = "0.1.0"
+authors = ["hustcer"]
+default-run = "musd"
+description = "A CLI App to search and download musics"
 edition = "2021"
+exclude = ["nu", "Justfile", "cliff.toml"]
+license = "MIT"
+name = "musd"
+readme = "README.md"
+version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

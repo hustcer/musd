@@ -18,9 +18,11 @@
  *  [x] Notify user if there is no matching music；
  *  [x] Colored output to user terminal；
  *  [x] Stop downloading if music file already exists；
- *  [ ] Download the selected music(s) and show progress bar;
- *  [ ] Add just dev tasks: fmt, clippy, run, release;
- *  [ ] Add CHANGELOG.md;
+ *  [x] Add just dev tasks: fmt, clippy, run, release;
+ *  [x] Add CHANGELOG.md;
+ *  [x] Download the selected music;
+ *  [ ] Show progress bar while downloading;
+ *  [ ] Download multiple files at one time;
  *  [ ] Add README.md;
  *  [ ] Extract configs;
  *  [ ] Modular refactoring;
