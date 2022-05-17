@@ -16,7 +16,8 @@ def 'release' [
 ] {
 
   cd $env.SETUP_MUSD_PATH
-  let releaseVer = (open cargo.toml | get package.version)
+  let version = (open cargo.toml | get package.version)
+  let releaseVer = $'v($version)'
 
   if (has-ref $releaseVer) {
   	$'The version ($releaseVer) already exists, Please choose another version.(char nl)'
