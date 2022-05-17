@@ -7,13 +7,14 @@ use clap::Parser;
 use yansi::Paint;
 
 fn main() {
+    // Parsing user input args
     let args = musd::Args::parse();
     // Disable coloring by `CLICOLOR` env variable
     if let Ok(true) = std::env::var("CLICOLOR").map(|v| v == "0") {
         Paint::disable();
     }
     println!(
-        "Start downloading the music and output to `{}`!",
+        "Start downloading the music and will save to `{}`!",
         Paint::green(args.output).bold()
     );
     // 'music' values: Some(["someone", "like", "you"])

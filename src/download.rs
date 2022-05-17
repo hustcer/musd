@@ -32,7 +32,9 @@ pub async fn download(song: &Song) -> MusdResult<()> {
         .filter(|f| f.format_type == "SQ")
         .collect::<Vec<_>>();
 
-    let music = sq_format.get(0).unwrap();
+    let music = sq_format
+        .get(0)
+        .expect("No super quality format available!");
 
     // println!("{:#?}", &music);
     let target = if music.android_url.is_empty() {
@@ -40,18 +42,25 @@ pub async fn download(song: &Song) -> MusdResult<()> {
     } else {
         &music.android_url
     };
-    let mut download_url = Url::parse(&target)?;
+    // Use `https` download instead of `ftp`
+    let mut download_url = Url::parse(target)?;
     let result = download_url.set_scheme("https");
     assert!(result.is_ok());
     let result = download_url.set_host(Some("freetyst.nf.migu.cn"));
     assert!(result.is_ok());
     // println!("{}", &download_url);
+    // Get music file name from download URI
     let fname = download_url
         .path_segments()
         .and_then(|segments| segments.last())
         .and_then(|name| if name.is_empty() { None } else { Some(name) })
         .unwrap_or("music-tmp.flac");
-    let extension = Path::new(fname).extension().unwrap().to_str().unwrap();
+    let extension = Path::new(fname)
+        .extension()
+        .expect("Get music file extension error!")
+        .to_str()
+        .expect("Convert music file extension error!");
+
     let dest_file = format!("{}-{}.{extension}", song.name, song.singers[0].name);
     let dest_path = path.join(&dest_file);
     // Check file existence, stop downloading if already exists.

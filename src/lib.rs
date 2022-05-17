@@ -19,7 +19,7 @@
  *  [x] Colored output to user terminal；
  *  [x] Stop downloading if music file already exists；
  *  [ ] Download the selected music(s) and show progress bar;
- *  [ ] Add just dev tasks;
+ *  [ ] Add just dev tasks: fmt, clippy, run, release;
  *  [ ] Add CHANGELOG.md;
  *  [ ] Add README.md;
  *  [ ] Extract configs;
@@ -56,7 +56,9 @@ pub async fn search(search: &str) -> MusdResult<Vec<Song>> {
     let val: Value = serde_json::from_str(&resp)?;
     let result = &val["songResultData"]["result"];
 
-    if result.to_string() == "null".to_owned() {
+    // Handling no searching result cases
+    #[allow(clippy::cmp_owned)]
+    if result.to_string() == "null" {
         println!(
             "Can not find {} related musics! Bye ...",
             Paint::green(search).bold()
@@ -76,6 +78,8 @@ pub fn choose_music(songs: Vec<Song>) -> MusdResult<()> {
         .iter()
         .filter(|s| s.new_rate_formats.iter().any(|f| f.format_type == "SQ"))
         .collect::<Vec<_>>();
+
+    // Prepare music list for user selecting
     let selections = sq_songs
         .iter()
         .enumerate()
@@ -88,7 +92,10 @@ pub fn choose_music(songs: Vec<Song>) -> MusdResult<()> {
 
             // println!("{:#?}", sq_format);
             let idx = i + 1;
-            let size = sq_format[0].size.parse::<u32>().unwrap();
+            let size = sq_format[0]
+                .size
+                .parse::<u32>()
+                .expect("Music file size parsing error!");
             let size_mb: f32 = (size as f32) / 1024.0 / 1024.0;
 
             format!("{idx}. {} -{} -- {:.2} MB", s.name, s.singers[0], size_mb)
@@ -106,7 +113,7 @@ pub fn choose_music(songs: Vec<Song>) -> MusdResult<()> {
         .default(0)
         .items(&selections[..])
         .interact()
-        .unwrap();
+        .expect("Music selecting failed!");
 
     // println!("You select {:#?}", sq_songs[selection]);
     // println!("Start to download {}!", Paint::green(&selections[selection]));
