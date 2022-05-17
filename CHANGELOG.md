@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [0.1.0] - 2022-05-17
 
+### Bug Fixes
+
+- Fix music file downloading
+
 ### Features
 
 - Add search and select feature
@@ -12,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Highlight output and add no search result tip
 - Warn the user if music file already exists
 - Add develop related tasks managed by just
+- Add CHANGELOG.md
 
 ### Miscellaneous Tasks
 
