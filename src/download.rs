@@ -1,10 +1,14 @@
+/**
+ * Author: hustcer
+ * Created: 2022/05/17 13:52:00
+ * Description: Music download helper
+ */
 use crate::def::Song;
 use std::fs::File;
 use std::io::copy;
-use std::string::FromUtf8Error;
+use std::path::Path;
 use thiserror::Error;
 use url::Url;
-use urlencoding::decode;
 
 type MusdResult<T> = Result<T, MusdError>;
 
@@ -16,8 +20,6 @@ pub enum MusdError {
     CopyFailed(#[from] std::io::Error),
     #[error("download by reqwest failed")]
     ReqwestErr(#[from] reqwest::Error),
-    #[error("download url decoding error")]
-    DecodeErr(#[from] FromUtf8Error),
 }
 
 #[tokio::main]
@@ -31,7 +33,7 @@ pub async fn download(song: &Song) -> MusdResult<()> {
 
     let music = sq_format.get(0).unwrap();
 
-    println!("{:#?}", &music);
+    // println!("{:#?}", &music);
     let target = if music.android_url.is_empty() {
         &music.url
     } else {
@@ -42,7 +44,7 @@ pub async fn download(song: &Song) -> MusdResult<()> {
     assert!(result.is_ok());
     let result = download_url.set_host(Some("freetyst.nf.migu.cn"));
     assert!(result.is_ok());
-    println!("{}", &download_url);
+    // println!("{}", &download_url);
 
     let response = reqwest::get(download_url.as_str()).await?;
 
@@ -52,10 +54,11 @@ pub async fn download(song: &Song) -> MusdResult<()> {
             .path_segments()
             .and_then(|segments| segments.last())
             .and_then(|name| if name.is_empty() { None } else { Some(name) })
-            .unwrap_or("tmp-music.flac");
+            .unwrap_or("music-tmp.flac");
 
-        let dest = decode(fname)?.into_owned();
-        println!("File to download: '{:?}'", dest);
+        let extension = Path::new(fname).extension().unwrap().to_str().unwrap();
+        let dest = format!("{}-{}.{extension}", song.name, song.singers[0].name);
+        println!("The music to download: '{:?}'", dest);
         let dest = path.join(dest);
         println!("Will be located under: '{:?}'", dest);
         File::create(dest)?

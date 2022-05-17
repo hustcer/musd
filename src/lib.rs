@@ -16,6 +16,7 @@
  *  [x] 以表格形式显示歌曲搜索列表含名称、歌手、大小、格式等信息;
  *  [x] 选择歌曲;
  *  [ ] 搜索不到结果给予提示；
+ *  [ ] 已下载覆盖提示；
  *  [ ] 下载歌曲并显示下载进度;
  *  [ ] 配置分离;
  *  [ ] 代码模块化重构;
@@ -45,7 +46,7 @@ pub async fn search(search: &str) -> MusdResult<Vec<Song>> {
         .append_pair("text", search)
         .append_pair("pageSize", "1")
         .append_pair("searchSwitch", "{song:1}");
-    println!("Current search url {}", url.as_str());
+    // println!("Current search url {}", url.as_str());
     let resp = reqwest::get(url.as_str()).await?.text().await?;
     let val: Value = serde_json::from_str(&resp)?;
     // let songs = val["songResultData"]["result"].as_array().unwrap();
@@ -63,17 +64,20 @@ pub fn choose_music(songs: Vec<Song>) -> MusdResult<()> {
         .collect::<Vec<_>>();
     let selections = sq_songs
         .iter()
-        .map(|s| {
+        .enumerate()
+        .map(|(i, s)| {
             let sq_format = s
                 .new_rate_formats
                 .iter()
                 .filter(|f| f.format_type == "SQ")
                 .collect::<Vec<_>>();
 
-            println!("{:#?}", sq_format);
+            // println!("{:#?}", sq_format);
+            let idx = i + 1;
             let size = sq_format[0].size.parse::<u32>().unwrap();
             let size_mb: f32 = (size as f32) / 1024.0 / 1024.0;
-            format!("{} -{} -- {:.2} MB", s.name, s.singers[0], size_mb)
+
+            format!("{idx}. {} -{} -- {:.2} MB", s.name, s.singers[0], size_mb)
         })
         .collect::<Vec<_>>();
 
@@ -92,6 +96,10 @@ pub fn choose_music(songs: Vec<Song>) -> MusdResult<()> {
 
     // println!("You select {:#?}", sq_songs[selection]);
     println!("Start to download {}!", selections[selection]);
-    download::download(sq_songs[selection]);
+
+    if let Err(e) = download::download(sq_songs[selection]) {
+        eprintln!("[ERROR]: {}", e);
+        std::process::exit(2);
+    }
     Ok(())
 }

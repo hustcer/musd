@@ -9,7 +9,7 @@ fn main() {
     let args = musd::Args::parse();
     println!("Start download the music and output to `{}`!", args.output);
     // 'music' values: Some(["someone", "like", "you"])
-    println!("'music' values: {:?}", args.music);
+    // println!("'music' values: {:?}", args.music);
 
     if let Err(e) = musd::search(&args.music.join(" ")).and_then(musd::choose_music) {
         eprintln!("[ERROR]: {}", e);

@@ -1,3 +1,8 @@
+/**
+ * Author: hustcer
+ * Created: 2022/05/17 13:52:00
+ * Description: Commonly used structs
+ */
 use clap::Parser;
 use serde::Deserialize;
 
