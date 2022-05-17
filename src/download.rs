@@ -46,23 +46,29 @@ pub async fn download(song: &Song) -> MusdResult<()> {
     let result = download_url.set_host(Some("freetyst.nf.migu.cn"));
     assert!(result.is_ok());
     // println!("{}", &download_url);
+    let fname = download_url
+        .path_segments()
+        .and_then(|segments| segments.last())
+        .and_then(|name| if name.is_empty() { None } else { Some(name) })
+        .unwrap_or("music-tmp.flac");
+    let extension = Path::new(fname).extension().unwrap().to_str().unwrap();
+    let dest_file = format!("{}-{}.{extension}", song.name, song.singers[0].name);
+    let dest_path = path.join(&dest_file);
+    // Check file existence, stop downloading if already exists.
+    if Path::new(&dest_path).exists() {
+        println!(
+            "File {} already exists, stop downloading, bye...",
+            Paint::green(&dest_path.to_string_lossy())
+        );
+        std::process::exit(0);
+    }
 
     let response = reqwest::get(download_url.as_str()).await?;
 
     let mut dest = {
-        let fname = response
-            .url()
-            .path_segments()
-            .and_then(|segments| segments.last())
-            .and_then(|name| if name.is_empty() { None } else { Some(name) })
-            .unwrap_or("music-tmp.flac");
-
-        let extension = Path::new(fname).extension().unwrap().to_str().unwrap();
-        let dest = format!("{}-{}.{extension}", song.name, song.singers[0].name);
-        println!("The music to download: '{:?}'", Paint::green(&dest));
-        let dest = path.join(dest);
-        println!("Will be located under: '{:?}'", Paint::green(&dest));
-        File::create(dest)?
+        println!("The music to download: '{:?}'", Paint::green(&dest_file));
+        println!("Will be located under: '{:?}'", Paint::green(&dest_path));
+        File::create(dest_path)?
     };
     let content = response.text().await?;
     copy(&mut content.as_bytes(), &mut dest)?;

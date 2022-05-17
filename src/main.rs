@@ -12,7 +12,10 @@ fn main() {
     if let Ok(true) = std::env::var("CLICOLOR").map(|v| v == "0") {
         Paint::disable();
     }
-    println!("Start downloading the music and output to `{}`!", Paint::green(args.output).bold());
+    println!(
+        "Start downloading the music and output to `{}`!",
+        Paint::green(args.output).bold()
+    );
     // 'music' values: Some(["someone", "like", "you"])
     // println!("'music' values: {:?}", args.music);
 

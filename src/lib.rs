@@ -12,19 +12,22 @@
  *  7. https://docs.rs/url/latest/url/index.html
  *
  * TODO:
- *  [x] 搜索歌曲;
- *  [x] 以表格形式显示歌曲搜索列表含名称、歌手、大小、格式等信息;
- *  [x] 选择歌曲;
- *  [x] 搜索不到结果给予提示；
- *  [x] 部分输出高亮显示；
- *  [ ] 已下载覆盖提示；
- *  [ ] 下载歌曲并显示下载进度;
- *  [ ] 配置分离;
- *  [ ] 代码模块化重构;
- *  [ ] 集成测试;
- *  [ ] 允许通过环境变量和 `--output(-o)` 配置歌曲下载路径;
- *  [ ] 国际化文案显示;
- *  [ ] 确保 Mac & Windows 下均可使用;
+ *  [x] Search music;
+ *  [x] List music searching results, include name, singer and size, etc.;
+ *  [x] Select the music(s) to be downloaded;
+ *  [x] Notify user if there is no matching music；
+ *  [x] Colored output to user terminal；
+ *  [x] Stop downloading if music file already exists；
+ *  [ ] Download the selected music(s) and show progress bar;
+ *  [ ] Add just dev tasks;
+ *  [ ] Add CHANGELOG.md;
+ *  [ ] Add README.md;
+ *  [ ] Extract configs;
+ *  [ ] Modular refactoring;
+ *  [ ] CI tests;
+ *  [ ] Customizable output path by using ENV var or `--output(-o)` option;
+ *  [ ] I18n output?;
+ *  [ ] Make sure that it works on Mac & Windows;
  */
 mod def;
 mod download;
@@ -54,7 +57,10 @@ pub async fn search(search: &str) -> MusdResult<Vec<Song>> {
     let result = &val["songResultData"]["result"];
 
     if result.to_string() == "null".to_owned() {
-        println!("Can not find {} related musics! Bye ...", Paint::green(search).bold());
+        println!(
+            "Can not find {} related musics! Bye ...",
+            Paint::green(search).bold()
+        );
         std::process::exit(0);
     }
     // let songs = val["songResultData"]["result"].as_array().unwrap();
