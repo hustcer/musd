@@ -3,25 +3,12 @@
  * Created: 2022/05/17 13:52:00
  * Description: Music download helper
  */
-use crate::def::Song;
+use crate::def::{MusdResult, Song};
 use std::fs::File;
 use std::io::copy;
 use std::path::Path;
-use thiserror::Error;
 use url::Url;
 use yansi::Paint;
-
-type MusdResult<T> = Result<T, MusdError>;
-
-#[derive(Error, Debug)]
-pub enum MusdError {
-    #[error("download url parsing error")]
-    UrlErr(#[from] url::ParseError),
-    #[error("download target copy failed")]
-    CopyFailed(#[from] std::io::Error),
-    #[error("download by reqwest failed")]
-    ReqwestErr(#[from] reqwest::Error),
-}
 
 #[tokio::main]
 pub async fn download(song: &Song) -> MusdResult<()> {
@@ -75,8 +62,8 @@ pub async fn download(song: &Song) -> MusdResult<()> {
     let response = reqwest::get(download_url.as_str()).await?;
 
     let mut dest = {
-        println!("The music to download: '{:?}'", Paint::green(&dest_file));
-        println!("Will be located under: '{:?}'", Paint::green(&dest_path));
+        println!("The music to download: {:?}", Paint::green(&dest_file));
+        println!("Will be located under: {:?}", Paint::green(&dest_path));
         File::create(dest_path)?
     };
     let content = response.text().await?;

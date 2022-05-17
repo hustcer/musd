@@ -5,6 +5,21 @@
  */
 use clap::Parser;
 use serde::Deserialize;
+use thiserror::Error;
+
+pub type MusdResult<T> = Result<T, MusdError>;
+
+#[derive(Error, Debug)]
+pub enum MusdError {
+    #[error("download url parsing error")]
+    UrlErr(#[from] url::ParseError),
+    #[error("download target copy failed")]
+    CopyFailed(#[from] std::io::Error),
+    #[error("download by reqwest failed")]
+    ReqwestErr(#[from] reqwest::Error),
+    #[error("response parsing failed")]
+    JsonParseErr(#[from] serde_json::Error),
+}
 
 /// A CLI App to search and download musics
 #[derive(Parser, Debug)]

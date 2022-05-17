@@ -34,15 +34,12 @@ mod download;
 
 pub use def::*;
 
-use crate::def::Song;
+use crate::def::{MusdResult, Song};
 use dialoguer::{theme::ColorfulTheme, Select};
 use serde::Deserialize;
 use serde_json::Value;
-use std::error::Error;
 use url::Url;
 use yansi::Paint;
-
-type MusdResult<T> = Result<T, Box<dyn Error>>;
 
 #[tokio::main]
 pub async fn search(search: &str) -> MusdResult<Vec<Song>> {
