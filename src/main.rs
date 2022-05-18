@@ -20,7 +20,7 @@ fn main() {
     // 'music' values: Some(["someone", "like", "you"])
     // println!("'music' values: {:?}", args.music);
 
-    if let Err(e) = musd::search(&args.music.join(" ")).and_then(musd::choose_music) {
+    if let Err(e) = musd::search(&args.music.join(" ")).and_then(musd::download_selected) {
         eprintln!("[ERROR]: {}", Paint::red(e));
         std::process::exit(1);
     }

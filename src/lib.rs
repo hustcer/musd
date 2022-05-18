@@ -10,6 +10,7 @@
  *  5. https://pd.musicapp.migu.cn/MIGUM3.0/v1.0/content/search_all.do?text=传奇&pageSize=1&searchSwitch={song:1}
  *  6. https://rust-lang-nursery.github.io/rust-cookbook/web/clients/download.html
  *  7. https://docs.rs/url/latest/url/index.html
+ *  8. https://github.com/mihaigalos/tutorials/tree/master/rust/download_with_progressbar
  *
  * TODO:
  *  [x] Search music;
@@ -22,14 +23,16 @@
  *  [x] Add CHANGELOG.md;
  *  [x] Download the selected music;
  *  [ ] Show progress bar while downloading;
- *  [ ] Download multiple files at one time;
+ *  [ ] Customizable output path by using ENV var;
+ *  [ ] Customizable output path by using `--output(-o)` option;
  *  [ ] Add README.md;
+ *  [ ] Download multiple files at one time;
  *  [ ] Extract configs;
  *  [ ] Modular refactoring;
  *  [ ] CI tests;
- *  [ ] Customizable output path by using ENV var or `--output(-o)` option;
  *  [ ] I18n output?;
  *  [ ] Make sure that it works on Mac & Windows;
+ *  [ ] Handling `Ctrl + c` for Windows
  */
 mod def;
 mod download;
@@ -43,6 +46,9 @@ use serde_json::Value;
 use url::Url;
 use yansi::Paint;
 
+/**
+ * Search music by music or singer name
+ */
 #[tokio::main]
 pub async fn search(search: &str) -> MusdResult<Vec<Song>> {
     let mut url = Url::parse("https://pd.musicapp.migu.cn/MIGUM3.0/v1.0/content/search_all.do")?;
@@ -70,14 +76,33 @@ pub async fn search(search: &str) -> MusdResult<Vec<Song>> {
     Ok(songs)
 }
 
-// Show music selector and press `enter` to download it
-pub fn choose_music(songs: Vec<Song>) -> MusdResult<()> {
+/**
+ * Show music selector and press `enter` or `space` to download it
+ */
+pub fn download_selected(songs: Vec<Song>) -> MusdResult<()> {
     // Filter songs that have super quality
     let sq_songs = songs
         .iter()
         .filter(|s| s.new_rate_formats.iter().any(|f| f.format_type == "SQ"))
         .collect::<Vec<_>>();
 
+    // Select one music a time, we can use multiple select later
+    let selection = select_music(sq_songs.clone());
+
+    // println!("You select {:#?}", sq_songs[selection]);
+    // println!("Start to download {}!", Paint::green(&selections[selection]));
+
+    if let Err(e) = download::download_music(sq_songs[selection]) {
+        eprintln!("[ERROR]: {}", Paint::red(e));
+        std::process::exit(2);
+    }
+    Ok(())
+}
+
+/**
+ * Show music selector with music name, singer and size included
+ */
+fn select_music(sq_songs: Vec<&Song>) -> usize {
     // Prepare music list for user selecting
     let selections = sq_songs
         .iter()
@@ -107,19 +132,10 @@ pub fn choose_music(songs: Vec<Song>) -> MusdResult<()> {
     );
 
     // Select one music a time, we can use multiple select later
-    let selection = Select::with_theme(&ColorfulTheme::default())
+    Select::with_theme(&ColorfulTheme::default())
         .with_prompt(prompt)
         .default(0)
         .items(&selections[..])
         .interact()
-        .expect("Music selecting failed!");
-
-    // println!("You select {:#?}", sq_songs[selection]);
-    // println!("Start to download {}!", Paint::green(&selections[selection]));
-
-    if let Err(e) = download::download(sq_songs[selection]) {
-        eprintln!("[ERROR]: {}", Paint::red(e));
-        std::process::exit(2);
-    }
-    Ok(())
+        .expect("Music selecting failed!")
 }

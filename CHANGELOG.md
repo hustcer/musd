@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 
-- Fix music file downloading
+- Fix music file downloading corruption issue
 
 ### Features
 
-- Add search and select feature
+- Add search and select music for downloading feature
 - Do some code refactor and extract lib.rs
 - Add download music feature
 - Rename downloaded music by music name and singer
@@ -20,6 +20,6 @@ All notable changes to this project will be documented in this file.
 
 ### Miscellaneous Tasks
 
-- Fix clippy warnings
+- Fix rust clippy warnings
 - Add LICENSE and empty README.md file
 
