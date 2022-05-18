@@ -6,6 +6,8 @@
 
 </div>
 
+`musd` 是一个音乐下载器，也是 MUSic Downloader 的简称。
+
 ## 安装
 
 如果您尚未安装 `cargo` 请根据这个[指南](https://www.rust-lang.org/tools/install) 安装 rust 相关工具链。

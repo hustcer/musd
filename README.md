@@ -8,6 +8,8 @@
 
 </div>
 
+`musd` is a MUSic Downloader, and that's why it was named as `musd`.
+
 ## Installation
 
 You need to have `cargo` been installed, if you haven't installed it yet here is a [guide](https://www.rust-lang.org/tools/install) for you.
@@ -42,7 +44,7 @@ musd Celine Dion
 
 By default, the highest quality lossless music will be downloaded, usually in `flac` format.
 
-This app was totally inspired by [musicn](https://github.com/zonemeen/musicn), special thanks to them.
-`musicn` was written in Node.js and I rewrite it by rust just for practice. And this is my first Rust App.
+This app was heavily inspired by [musicn](https://github.com/zonemeen/musicn), special thanks to them.
+`musicn` was written in Node.js and I rewrote it by rust just for practice. And this is my first Rust App.
 Hope you love it.
 
