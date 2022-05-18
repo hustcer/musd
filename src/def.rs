@@ -19,6 +19,8 @@ pub enum MusdError {
     ReqwestErr(#[from] reqwest::Error),
     #[error("response parsing failed")]
     JsonParseErr(#[from] serde_json::Error),
+    #[error("failed to get content length from `{0}`")]
+    GetLengthFailed(String),
 }
 
 /// A CLI App to search and download musics

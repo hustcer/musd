@@ -3,10 +3,13 @@
  * Created: 2022/05/17 13:52:00
  * Description: Music download helper
  */
-use crate::def::{MusdResult, Song};
+use crate::def::{MusdError, MusdResult, Song};
+use futures_util::StreamExt;
+use indicatif::{ProgressBar, ProgressStyle};
+use reqwest::Client;
+use std::cmp::min;
 use std::fs::File;
 use std::io::prelude::*;
-use std::io::BufWriter;
 use std::path::Path;
 use url::Url;
 use yansi::Paint;
@@ -19,8 +22,9 @@ pub async fn download_music(song: &Song) -> MusdResult<()> {
     let path = std::env::current_dir()?;
     let download_url = get_download_url(song)?;
     // println!("{}", &download_url);
-    // Get music file name from download URI
+    // Get music file extension from download URI
     let extension = get_file_extension(&download_url);
+    let download_src = download_url.to_string();
 
     let dest_file = format!("{}-{}.{extension}", song.name, song.singers[0].name);
     let dest_path = path.join(&dest_file);
@@ -33,17 +37,39 @@ pub async fn download_music(song: &Song) -> MusdResult<()> {
         std::process::exit(0);
     }
 
-    let response = reqwest::get(download_url.as_str()).await?;
+    // Reqwest setup
+    let res = Client::new().get(&download_src).send().await?;
+    let total_size = res
+        .content_length()
+        .ok_or_else(|| MusdError::GetLengthFailed(String::from(&download_src)))
+        .expect("Get content length failed!");
 
-    let dest = {
+    // Indicatif setup
+    let pb = ProgressBar::new(total_size);
+    pb.set_style(ProgressStyle::default_bar()
+        .template("{msg}\n{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({bytes_per_sec}, {eta})")
+        .expect("Progress bar rendering failed!")
+        .progress_chars("#>-"));
+
+    let mut downloaded: u64 = 0;
+    let mut stream = reqwest::get(download_url).await?.bytes_stream();
+
+    let mut dest = {
         println!("The music to download: {:?}", Paint::green(&dest_file));
         println!("Will be located under: {:?}", Paint::green(&dest_path));
         File::create(dest_path)?
     };
-    let content = response.bytes().await?;
-    let mut buffer = BufWriter::new(dest);
-    buffer.write_all(&content[..])?;
-    buffer.flush()?;
+    while let Some(item) = stream.next().await {
+        let chunk = item?;
+        let _ = dest
+            .write_all(&chunk)
+            .map_err(|_| "Error while writing to file");
+        let new = min(downloaded + (chunk.len() as u64), total_size);
+        downloaded = new;
+        pb.set_position(new);
+    }
+
+    pb.finish_with_message(format!("Downloaded to {}", dest_file));
     Ok(())
 }
 
