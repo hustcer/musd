@@ -15,23 +15,21 @@
  *
  * TODO:
  *  [x] Search music;
+ *  [x] Notify user if there is no matching music；
  *  [x] List music searching results, include name, singer and size, etc.;
  *  [x] Select the music(s) to be downloaded;
- *  [x] Notify user if there is no matching music；
- *  [x] Colored output to user terminal；
- *  [x] Stop downloading if music file already exists；
- *  [x] Add just dev tasks: fmt, clippy, run, release;
- *  [x] Add CHANGELOG.md;
  *  [x] Download the selected music;
+ *  [x] Stop downloading if music file already exists；
  *  [x] Show progress bar while downloading;
  *  [x] Customizable output path by using ENV var;
  *  [x] Customizable output path by using `--output(-o)` option;
+ *  [x] Colored output to user terminal；
+ *  [x] Add just dev tasks: fmt, clippy, release, etc.;
  *  [ ] Add README.md;
  *  [ ] Download multiple files at one time;
  *  [ ] Extract configs;
- *  [ ] Modular refactoring;
  *  [ ] CI tests;
- *  [ ] I18n output?;
+ *  [ ] I18n messages?;
  *  [ ] Make sure that it works on Mac & Windows;
  *  [ ] Handling `Ctrl + c` for Windows
  *  [ ] Add github release workflow to release binary for mac/win/linux

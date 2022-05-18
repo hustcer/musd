@@ -28,9 +28,9 @@ pub enum MusdError {
  */
 /// A CLI App to search and download musics
 #[derive(Parser, Debug)]
-#[clap(version, about, long_about = None)]
+#[clap(version, about, long_about = None, arg_required_else_help(true))]
 pub struct Args {
-    /// The path you want to save the downloaded music to, current directory by default
+    /// The path to save the downloaded music, current directory by default, and you can use `MUSD_OUTPUT` env to set the default output path too
     #[clap(short, long, parse(from_os_str), value_name = "PATH")]
     pub output: Option<std::path::PathBuf>,
 
