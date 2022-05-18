@@ -4,6 +4,8 @@
 
 [中文说明](README.zh-CN.md)
 
+![build](https://img.shields.io/github/workflow/status/hustcer/musd/ci)
+
 🎵 A Rust CLI App to download super high quality musics🎵
 
 </div>

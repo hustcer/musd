@@ -2,6 +2,8 @@
 
 # Musd
 
+![build](https://img.shields.io/github/workflow/status/hustcer/musd/ci)
+
 🎵 一个可以下载高品质音乐的 Rust CLI 工具🎵
 
 </div>
