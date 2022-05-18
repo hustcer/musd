@@ -23,16 +23,6 @@
  *  [x] Show progress bar while downloading;
  *  [x] Customizable output path by using ENV var;
  *  [x] Customizable output path by using `--output(-o)` option;
- *  [x] Colored output to user terminal；
- *  [x] Add just dev tasks: fmt, clippy, release, etc.;
- *  [ ] Add README.md;
- *  [ ] Download multiple files at one time;
- *  [ ] Extract configs;
- *  [ ] CI tests;
- *  [ ] I18n messages?;
- *  [ ] Make sure that it works on Mac & Windows;
- *  [ ] Handling `Ctrl + c` for Windows
- *  [ ] Add github release workflow to release binary for mac/win/linux
  */
 mod def;
 mod download;

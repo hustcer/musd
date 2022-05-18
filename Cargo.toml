@@ -7,7 +7,10 @@ exclude = ["nu", "Justfile", "cliff.toml"]
 license = "MIT"
 name = "musd"
 readme = "README.md"
-version = "0.1.1"
+version = "0.1.2"
+homepage = "https://github.com/hustcer/musd"
+repository = "git@github.com:hustcer/musd.git"
+documentation = "https://github.com/hustcer/musd/blob/main/README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
