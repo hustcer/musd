@@ -3,7 +3,7 @@
  * Created: 2022/05/17 13:52:00
  * Description: Music download helper
  */
-use crate::def::{MusdError, MusdResult, Song};
+use crate::def::{Args, MusdError, MusdResult, Song};
 use futures_util::StreamExt;
 use indicatif::{ProgressBar, ProgressStyle};
 use std::cmp::min;
@@ -17,8 +17,8 @@ use yansi::Paint;
  * Download music file and save to local disk
  */
 #[tokio::main]
-pub async fn download_music(song: &Song) -> MusdResult<()> {
-    let dest_dir = get_dest_directory()?;
+pub async fn download_music(song: &Song, args: &Args) -> MusdResult<()> {
+    let dest_dir = get_dest_directory(args)?;
     let download_url = get_download_url(song)?;
     let download_src = download_url.to_string();
     // println!("{}", &download_url);
@@ -42,6 +42,11 @@ pub async fn download_music(song: &Song) -> MusdResult<()> {
         .content_length()
         .ok_or_else(|| MusdError::GetLengthFailed(String::from(&download_src)))
         .expect("Get content length failed!");
+
+    println!(
+        "Start downloading the music and will be saved to `{}`!",
+        Paint::green(&dest_dir.display()).bold()
+    );
 
     // Indicatif setup
     let pb = ProgressBar::new(total_size);
@@ -124,8 +129,13 @@ fn get_file_extension(download_url: &Url) -> &str {
  * 2. If `MUSD_OUTPUT` was set and the value as a directory exists, then use it;
  * 3. Finally, `--output(-o)` option will has the hightest priority if it exists;
  */
-fn get_dest_directory() -> MusdResult<PathBuf> {
+fn get_dest_directory(args: &Args) -> MusdResult<PathBuf> {
+    // println!("{:?}", args);
     let output_env_key = "MUSD_OUTPUT";
+    if let Some(path) = &args.output {
+        return Ok(path.to_path_buf());
+    }
+    // If no `--output(-o)` option specified use current directory by default
     let path = std::env::current_dir()?;
     match std::env::var(output_env_key) {
         Ok(val) if Path::new(&val).exists() => Ok(Path::new(&val).to_path_buf()),

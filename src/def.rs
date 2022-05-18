@@ -23,15 +23,19 @@ pub enum MusdError {
     GetLengthFailed(String),
 }
 
+/**
+ * REF: https://github.com/clap-rs/clap/blob/v3.1.18/examples/derive_ref/README.md
+ */
 /// A CLI App to search and download musics
 #[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
+#[clap(version, about, long_about = None)]
 pub struct Args {
-    /// The path you want to save the downloaded music to
-    #[clap(short, long, default_value = ".")]
-    pub output: String,
+    /// The path you want to save the downloaded music to, current directory by default
+    #[clap(short, long, parse(from_os_str), value_name = "PATH")]
+    pub output: Option<std::path::PathBuf>,
 
     /// The music or singer name to search for further downloading
+    #[clap(value_name = "MUSIC_OR_SINGER")]
     pub music: Vec<String>,
 }
 

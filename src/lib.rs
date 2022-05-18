@@ -11,6 +11,7 @@
  *  6. https://rust-lang-nursery.github.io/rust-cookbook/web/clients/download.html
  *  7. https://docs.rs/url/latest/url/index.html
  *  8. https://github.com/mihaigalos/tutorials/tree/master/rust/download_with_progressbar
+ *  9. https://www.sitepoint.com/rust-global-variables/
  *
  * TODO:
  *  [x] Search music;
@@ -24,7 +25,7 @@
  *  [x] Download the selected music;
  *  [x] Show progress bar while downloading;
  *  [x] Customizable output path by using ENV var;
- *  [ ] Customizable output path by using `--output(-o)` option;
+ *  [x] Customizable output path by using `--output(-o)` option;
  *  [ ] Add README.md;
  *  [ ] Download multiple files at one time;
  *  [ ] Extract configs;
@@ -80,7 +81,7 @@ pub async fn search(search: &str) -> MusdResult<Vec<Song>> {
 /**
  * Show music selector and press `enter` or `space` to download it
  */
-pub fn download_selected(songs: Vec<Song>) -> MusdResult<()> {
+pub fn download_selected(songs: Vec<Song>, args: &Args) -> MusdResult<()> {
     // Filter songs that have super quality
     let sq_songs = songs
         .iter()
@@ -93,7 +94,7 @@ pub fn download_selected(songs: Vec<Song>) -> MusdResult<()> {
     // println!("You select {:#?}", sq_songs[selection]);
     // println!("Start to download {}!", Paint::green(&selections[selection]));
 
-    if let Err(e) = download::download_music(sq_songs[selection]) {
+    if let Err(e) = download::download_music(sq_songs[selection], args) {
         eprintln!("[ERROR]: {}", Paint::red(e));
         std::process::exit(2);
     }
