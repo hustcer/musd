@@ -23,7 +23,7 @@
  *  [x] Add CHANGELOG.md;
  *  [x] Download the selected music;
  *  [x] Show progress bar while downloading;
- *  [ ] Customizable output path by using ENV var;
+ *  [x] Customizable output path by using ENV var;
  *  [ ] Customizable output path by using `--output(-o)` option;
  *  [ ] Add README.md;
  *  [ ] Download multiple files at one time;

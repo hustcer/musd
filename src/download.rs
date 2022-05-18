@@ -9,7 +9,7 @@ use indicatif::{ProgressBar, ProgressStyle};
 use std::cmp::min;
 use std::fs::File;
 use std::io::prelude::*;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use url::Url;
 use yansi::Paint;
 
@@ -18,7 +18,7 @@ use yansi::Paint;
  */
 #[tokio::main]
 pub async fn download_music(song: &Song) -> MusdResult<()> {
-    let path = std::env::current_dir()?;
+    let dest_dir = get_dest_directory()?;
     let download_url = get_download_url(song)?;
     let download_src = download_url.to_string();
     // println!("{}", &download_url);
@@ -26,7 +26,7 @@ pub async fn download_music(song: &Song) -> MusdResult<()> {
     let extension = get_file_extension(&download_url);
 
     let dest_file = format!("{}-{}.{extension}", song.name, song.singers[0].name);
-    let dest_path = path.join(&dest_file);
+    let dest_path = dest_dir.join(&dest_file);
     // Check file existence, stop downloading if already exists.
     if Path::new(&dest_path).exists() {
         println!(
@@ -116,4 +116,20 @@ fn get_file_extension(download_url: &Url) -> &str {
         .expect("Get music file extension error!")
         .to_str()
         .expect("Convert music file extension error!")
+}
+
+/**
+ * Get dest directory to save the downloaded music files
+ * 1. Use current directory by default;
+ * 2. If `MUSD_OUTPUT` was set and the value as a directory exists, then use it;
+ * 3. Finally, `--output(-o)` option will has the hightest priority if it exists;
+ */
+fn get_dest_directory() -> MusdResult<PathBuf> {
+    let output_env_key = "MUSD_OUTPUT";
+    let path = std::env::current_dir()?;
+    match std::env::var(output_env_key) {
+        Ok(val) if Path::new(&val).exists() => Ok(Path::new(&val).to_path_buf()),
+        Err(_) => Ok(path),
+        _ => Ok(path),
+    }
 }
