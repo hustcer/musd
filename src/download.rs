@@ -6,7 +6,6 @@
 use crate::def::{MusdError, MusdResult, Song};
 use futures_util::StreamExt;
 use indicatif::{ProgressBar, ProgressStyle};
-use reqwest::Client;
 use std::cmp::min;
 use std::fs::File;
 use std::io::prelude::*;
@@ -21,10 +20,10 @@ use yansi::Paint;
 pub async fn download_music(song: &Song) -> MusdResult<()> {
     let path = std::env::current_dir()?;
     let download_url = get_download_url(song)?;
+    let download_src = download_url.to_string();
     // println!("{}", &download_url);
     // Get music file extension from download URI
     let extension = get_file_extension(&download_url);
-    let download_src = download_url.to_string();
 
     let dest_file = format!("{}-{}.{extension}", song.name, song.singers[0].name);
     let dest_path = path.join(&dest_file);
@@ -38,7 +37,7 @@ pub async fn download_music(song: &Song) -> MusdResult<()> {
     }
 
     // Reqwest setup
-    let res = Client::new().get(&download_src).send().await?;
+    let res = reqwest::get(download_url).await?;
     let total_size = res
         .content_length()
         .ok_or_else(|| MusdError::GetLengthFailed(String::from(&download_src)))
@@ -49,10 +48,10 @@ pub async fn download_music(song: &Song) -> MusdResult<()> {
     pb.set_style(ProgressStyle::default_bar()
         .template("{msg}\n{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {bytes}/{total_bytes} ({bytes_per_sec}, {eta})")
         .expect("Progress bar rendering failed!")
-        .progress_chars("#>-"));
+        .progress_chars("# >-")); // "█ >-" OR "#>-"
 
     let mut downloaded: u64 = 0;
-    let mut stream = reqwest::get(download_url).await?.bytes_stream();
+    let mut stream = res.bytes_stream();
 
     let mut dest = {
         println!("The music to download: {:?}", Paint::green(&dest_file));

@@ -22,7 +22,7 @@
  *  [x] Add just dev tasks: fmt, clippy, run, release;
  *  [x] Add CHANGELOG.md;
  *  [x] Download the selected music;
- *  [ ] Show progress bar while downloading;
+ *  [x] Show progress bar while downloading;
  *  [ ] Customizable output path by using ENV var;
  *  [ ] Customizable output path by using `--output(-o)` option;
  *  [ ] Add README.md;
@@ -33,6 +33,7 @@
  *  [ ] I18n output?;
  *  [ ] Make sure that it works on Mac & Windows;
  *  [ ] Handling `Ctrl + c` for Windows
+ *  [ ] Add github release workflow to release binary for mac/win/linux
  */
 mod def;
 mod download;
@@ -122,12 +123,12 @@ fn select_music(sq_songs: Vec<&Song>) -> usize {
                 .expect("Music file size parsing error!");
             let size_mb: f32 = (size as f32) / 1024.0 / 1024.0;
 
-            format!("{idx}. {} -{} -- {:.2} MB", s.name, s.singers[0], size_mb)
+            format!("{idx:2}. {} -{} -- {:.2} MB", s.name, s.singers[0], size_mb)
         })
         .collect::<Vec<_>>();
 
     let prompt = format!(
-        "Find {} results with high quality, Press `enter` or `space` key to download...",
+        "Find {} results with super high quality, Press `enter` or `space` key to download...",
         selections.len()
     );
 
@@ -137,5 +138,5 @@ fn select_music(sq_songs: Vec<&Song>) -> usize {
         .default(0)
         .items(&selections[..])
         .interact()
-        .expect("Music selecting failed!")
+        .expect("Music selection failed!")
 }

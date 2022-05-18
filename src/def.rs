@@ -11,15 +11,15 @@ pub type MusdResult<T> = Result<T, MusdError>;
 
 #[derive(Error, Debug)]
 pub enum MusdError {
-    #[error("download url parsing error")]
+    #[error("Download url parsing error")]
     UrlErr(#[from] url::ParseError),
-    #[error("download target copy failed")]
-    CopyFailed(#[from] std::io::Error),
-    #[error("download by reqwest failed")]
+    #[error("Dest file creation failed")]
+    CreationErr(#[from] std::io::Error),
+    #[error("Download by reqwest failed")]
     ReqwestErr(#[from] reqwest::Error),
-    #[error("response parsing failed")]
+    #[error("Searching response parsing failed")]
     JsonParseErr(#[from] serde_json::Error),
-    #[error("failed to get content length from `{0}`")]
+    #[error("Failed to get content length from `{0}`")]
     GetLengthFailed(String),
 }
 
