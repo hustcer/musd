@@ -3,13 +3,13 @@ authors = ["hustcer"]
 default-run = "musd"
 description = "A CLI App to search and download musics"
 edition = "2021"
-exclude = ["nu", "Justfile", "cliff.toml"]
+exclude = ["nu", "Justfile", "cliff.toml", "bin"]
 license = "MIT"
 name = "musd"
 readme = "README.md"
 version = "0.1.2"
 homepage = "https://github.com/hustcer/musd"
-repository = "git@github.com:hustcer/musd.git"
+repository = "https://github.com/hustcer/musd.git"
 documentation = "https://github.com/hustcer/musd/blob/main/README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
