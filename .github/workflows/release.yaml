@@ -64,20 +64,16 @@ jobs:
       if: ${{ matrix.target == 'armv7-unknown-linux-musleabihf' }}
       run: |
         sudo apt-get update
-        sudo apt-get install gcc-arm-linux-gnueabihf
+        sudo apt-get install gcc-arm*
 
-    - name: Ref Type
-      id: ref-type
-      run: cargo run --package ref-type -- --reference ${{ github.ref }}
-
-    - name: Package
-      id: package
+    - name: musd
+      id: musd
       env:
         TARGET: ${{ matrix.target }}
         REF: ${{ github.ref }}
         OS: ${{ matrix.os }}
         TARGET_RUSTFLAGS: ${{ matrix.target_rustflags }}
-      run: ./bin/package
+      run: ./bin/release
       shell: bash
 
     - name: Publish Archive
@@ -85,7 +81,6 @@ jobs:
       if: ${{ startsWith(github.ref, 'refs/tags/') }}
       with:
         draft: false
-        files: ${{ steps.package.outputs.archive }}
-        prerelease: ${{ steps.ref-type.outputs.value != 'release' }}
+        files: ${{ steps.musd.outputs.archive }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
