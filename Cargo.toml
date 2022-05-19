@@ -26,3 +26,13 @@ thiserror = "1.0"
 tokio = { version = "1.18.2", features = ["full"] }
 url = { version = "2.2.2" }
 yansi = { version = "0.5" }
+
+[profile.release]
+lto = "thin"
+opt-level = "s" # Optimize for size
+strip = "debuginfo"
+
+# Main cli binary
+[[bin]]
+name = "musd"
+path = "src/main.rs"
