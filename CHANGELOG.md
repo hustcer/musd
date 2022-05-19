@@ -1,6 +1,39 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2022-05-19
+
+### Bug Fixes
+
+- Fix github release workflow
+
+### Documentation
+
+- Add README.zh-CN.md
+- Add build status badge for README.md
+
+### Features
+
+- Add progress bar for downloading status
+- Add customizable output path by using `MUSD_OUTPUT` ENV var support
+- Add customizable output path by using `--output(-o)` option support
+- Add arg_required_else_help support
+- Add ci.yaml workflow
+- Add github release workflow
+- Add usage gif to README.md
+
+### Miscellaneous Tasks
+
+- Update actions for ci.yaml
+
+### Refactor
+
+- Extract configuration constants
+
+### Opt
+
+- Update release config for optimization
+
 ## [0.1.0] - 2022-05-17
 
 ### Bug Fixes
