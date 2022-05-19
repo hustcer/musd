@@ -2,9 +2,11 @@
 
 # Musd
 
-![build](https://img.shields.io/github/workflow/status/hustcer/musd/ci)
+![ci](https://img.shields.io/github/workflow/status/hustcer/musd/ci)
 
-🎵 一个可以下载高品质音乐的 Rust CLI 工具🎵
+🎵 一个可以下载高品质音乐的 Rust CLI 工具
+
+![](https://img.alicdn.com/imgextra/i2/O1CN01xGrmUJ1ncQeYjvDcj_!!6000000005110-1-tps-1964-878.gif)
 
 </div>
 
