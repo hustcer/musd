@@ -9,6 +9,11 @@ use thiserror::Error;
 
 pub type MusdResult<T> = Result<T, MusdError>;
 
+pub const MUSD_OUTPUT_ENV_KEY: &str = "MUSD_OUTPUT";
+pub const MIGU_DOWNLOAD_SCHEME: &str = "https";
+pub const MIGU_DOWNLOAD_HOST: &str = "freetyst.nf.migu.cn";
+pub const MIGU_QUERY_API: &str = "https://pd.musicapp.migu.cn/MIGUM3.0/v1.0/content/search_all.do";
+
 #[derive(Error, Debug)]
 pub enum MusdError {
     #[error("Download url parsing error")]

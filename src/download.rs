@@ -3,7 +3,7 @@
  * Created: 2022/05/17 13:52:00
  * Description: Music download helper
  */
-use crate::def::{Args, MusdError, MusdResult, Song};
+use crate::def::*;
 use futures_util::StreamExt;
 use indicatif::{ProgressBar, ProgressStyle};
 use std::cmp::min;
@@ -99,9 +99,9 @@ fn get_download_url(song: &Song) -> MusdResult<Url> {
     };
     // Use `https` download instead of `ftp`
     let mut download_url = Url::parse(target)?;
-    let result = download_url.set_scheme("https");
+    let result = download_url.set_scheme(MIGU_DOWNLOAD_SCHEME);
     assert!(result.is_ok());
-    let result = download_url.set_host(Some("freetyst.nf.migu.cn"));
+    let result = download_url.set_host(Some(MIGU_DOWNLOAD_HOST));
     assert!(result.is_ok());
     Ok(download_url)
 }
@@ -131,7 +131,7 @@ fn get_file_extension(download_url: &Url) -> &str {
  */
 fn get_dest_directory(args: &Args) -> MusdResult<PathBuf> {
     // println!("{:?}", args);
-    let output_env_key = "MUSD_OUTPUT";
+    let output_env_key = MUSD_OUTPUT_ENV_KEY;
     if let Some(path) = &args.output {
         return Ok(path.to_path_buf());
     }

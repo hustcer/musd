@@ -29,7 +29,6 @@ mod download;
 
 pub use def::*;
 
-use crate::def::{MusdResult, Song};
 use dialoguer::{theme::ColorfulTheme, Select};
 use serde::Deserialize;
 use serde_json::Value;
@@ -41,7 +40,7 @@ use yansi::Paint;
  */
 #[tokio::main]
 pub async fn search(search: &str) -> MusdResult<Vec<Song>> {
-    let mut url = Url::parse("https://pd.musicapp.migu.cn/MIGUM3.0/v1.0/content/search_all.do")?;
+    let mut url = Url::parse(MIGU_QUERY_API)?;
     url.query_pairs_mut()
         .append_pair("text", search)
         .append_pair("pageSize", "1")
