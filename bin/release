@@ -51,6 +51,7 @@ cp \
   Cargo.toml \
   LICENSE \
   README.md \
+  CHANGELOG.md \
   README.zh-CN.md \
   $dist
 
@@ -60,7 +61,11 @@ case $os in
   ubuntu-latest | macos-latest)
     archive=$dist/$bin-$version-$target.tar.gz
     tar czf $archive *
+    # echo '-------------------------------------------------------'
+    # echo `sed '4,/^## \[/!d' ../CHANGELOG.md | sed -e '$ d'`
+    # echo '-------------------------------------------------------'
     echo "::set-output name=archive::$archive"
+    # echo "::set-output name=changes::`sed '4,/^## \[/!d' ../CHANGELOG.md | sed -e '$ d'`"
     ;;
   windows-latest)
     archive=$dist/$bin-$version-$target.zip
