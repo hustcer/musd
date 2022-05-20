@@ -4,19 +4,33 @@ set -euxo pipefail
 
 os=$OS
 bin=musd
-src=`pwd`
+src=`pwd`   # Could use `GITHUB_WORKSPACE` env instead
 target=$TARGET
 dist=$src/dist
 version=`git tag --list --sort=version:refname 'v*' | tail -1`
 
-echo "Packaging $bin $version for $target..."
+echo "Packaging $bin $version for $target in $src..."
 
 test -f Cargo.lock || cargo generate-lockfile
 
 echo "Building $bin..."
 
-# Fix "musl-gcc: command not found"
-if [[ "ubuntu-latest" = $os ]]; then sudo apt install musl-tools -y; fi
+# Fix OpenSSL not found on Ubuntu
+if [[ "ubuntu-latest" = $os ]]; then
+  # musl-tools to fix 'Failed to find tool. Is `musl-gcc` installed?'
+  sudo apt install musl-tools -y;
+  # export OPENSSL_DIR="/usr/lib/ssl"
+  # export OPENSSL_INCLUDE_DIR="/usr/include/openssl"
+  # export OPENSSL_LIB_DIR="/usr/lib/x86_64-linux-gnu"
+
+  cd /usr/share
+  wget https://www.openssl.org/source/openssl-1.1.1o.tar.gz
+  tar xzf openssl-1.1.1o.tar.gz
+  cd openssl-1.1.1o && ./config shared 1>/dev/null && make 1>/dev/null && cd $src
+  export OPENSSL_LIB_DIR=/usr/share/openssl-1.1.1o/
+  export OPENSSL_INCLUDE_DIR=/usr/share/openssl-1.1.1o/include
+  # env
+fi
 
 case $os in
   ubuntu-latest | macos-latest)

@@ -17,8 +17,8 @@ jobs:
       matrix:
         target:
         - aarch64-apple-darwin
-        - aarch64-unknown-linux-musl
-        - armv7-unknown-linux-musleabihf
+        # - aarch64-unknown-linux-musl
+        # - armv7-unknown-linux-musleabihf
         - x86_64-apple-darwin
         - x86_64-pc-windows-msvc
         - x86_64-unknown-linux-musl
@@ -26,12 +26,12 @@ jobs:
         - target: aarch64-apple-darwin
           os: macos-latest
           target_rustflags: ''
-        - target: aarch64-unknown-linux-musl
-          os: ubuntu-latest
-          target_rustflags: '--codegen linker=aarch64-linux-gnu-gcc'
-        - target: armv7-unknown-linux-musleabihf
-          os: ubuntu-latest
-          target_rustflags: '--codegen linker=arm-linux-gnueabihf-gcc'
+        # - target: aarch64-unknown-linux-musl
+        #   os: ubuntu-latest
+        #   target_rustflags: '--codegen linker=aarch64-linux-gnu-gcc'
+        # - target: armv7-unknown-linux-musleabihf
+        #   os: ubuntu-latest
+        #   target_rustflags: '--codegen linker=arm-linux-gnueabihf-gcc'
         - target: x86_64-apple-darwin
           os: macos-latest
           target_rustflags: ''
@@ -66,7 +66,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install gcc-arm*
 
-    - name: musd
+    - name: Release musd binary
       id: musd
       env:
         TARGET: ${{ matrix.target }}
@@ -76,11 +76,12 @@ jobs:
       run: ./bin/release
       shell: bash
 
-    - name: Publish Archive
-      uses: softprops/action-gh-release@v0.1.5
-      if: ${{ startsWith(github.ref, 'refs/tags/') }}
-      with:
-        draft: false
-        files: ${{ steps.musd.outputs.archive }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # REF: https://github.com/marketplace/actions/gh-release
+    # - name: Publish Archive
+    #   uses: softprops/action-gh-release@v0.1.14
+    #   if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    #   with:
+    #     draft: false
+    #     files: ${{ steps.musd.outputs.archive }}
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
