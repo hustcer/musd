@@ -2,7 +2,7 @@
 
 # Musd
 
-![ci](https://img.shields.io/github/workflow/status/hustcer/musd/ci)
+[![Release](https://github.com/hustcer/musd/actions/workflows/release.yaml/badge.svg)](https://github.com/hustcer/musd/actions/workflows/release.yaml)
 
 🎵 一个可以下载高品质音乐的 Rust CLI 工具
 

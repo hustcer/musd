@@ -4,7 +4,7 @@
 
 [中文说明](README.zh-CN.md)
 
-![ci](https://img.shields.io/github/workflow/status/hustcer/musd/ci)
+[![Release](https://github.com/hustcer/musd/actions/workflows/release.yaml/badge.svg)](https://github.com/hustcer/musd/actions/workflows/release.yaml)
 
 🎵 A Rust CLI App to download super high quality musics🎵
 
