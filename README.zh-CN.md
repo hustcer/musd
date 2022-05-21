@@ -14,6 +14,12 @@
 
 ## 安装
 
+### 下载二进制包
+
+你可以根据自己的操作系统类型直接从 [这里](https://github.com/hustcer/musd/releases) 下载已经构建好的二进制包，然后直接执行其中的 `musd` 可执行文件即可。
+
+### 从源码安装
+
 如果您尚未安装 `cargo` 请根据这个[指南](https://www.rust-lang.org/tools/install) 安装 rust 相关工具链，需要 Rust 1.60.0 或以上版本。
 
 ```bash

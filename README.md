@@ -16,6 +16,12 @@
 
 ## Installation
 
+### Install from binary release
+
+You can download the binary tar ball according to your OS from the [Release Page](https://github.com/hustcer/musd/releases), and run the `musd` executable file directly.
+
+### Install from source
+
 You need to have `cargo` been installed, if you haven't installed it yet here is a [guide](https://www.rust-lang.org/tools/install) for you. (Rust v1.60.0 or above required)
 
 ```bash
