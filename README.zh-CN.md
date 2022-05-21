@@ -14,7 +14,7 @@
 
 ## 安装
 
-如果您尚未安装 `cargo` 请根据这个[指南](https://www.rust-lang.org/tools/install) 安装 rust 相关工具链。
+如果您尚未安装 `cargo` 请根据这个[指南](https://www.rust-lang.org/tools/install) 安装 rust 相关工具链，需要 Rust 1.60.0 或以上版本。
 
 ```bash
 # 从 crates.io 安装

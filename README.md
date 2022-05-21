@@ -16,7 +16,7 @@
 
 ## Installation
 
-You need to have `cargo` been installed, if you haven't installed it yet here is a [guide](https://www.rust-lang.org/tools/install) for you.
+You need to have `cargo` been installed, if you haven't installed it yet here is a [guide](https://www.rust-lang.org/tools/install) for you. (Rust v1.60.0 or above required)
 
 ```bash
 # Install from crates.io
