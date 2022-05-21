@@ -1,3 +1,4 @@
+pub mod build_info;
 /**
  * Author: hustcer
  * Created: 2022/05/15 16:52:00

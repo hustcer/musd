@@ -16,6 +16,11 @@ fn main() {
         Paint::disable();
     }
 
+    if args.build_info {
+        musd::build_info::show_info();
+        std::process::exit(0);
+    }
+
     if let Err(e) =
         musd::search(&args.music.join(" ")).and_then(|songs| musd::download_selected(songs, &args))
     {

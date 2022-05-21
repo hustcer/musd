@@ -39,6 +39,10 @@ pub struct Args {
     #[clap(short, long, parse(from_os_str), value_name = "PATH")]
     pub output: Option<std::path::PathBuf>,
 
+    /// Show the CLI build info detail
+    #[clap(short, long)]
+    pub build_info: bool,
+
     /// The music or singer name to search for further downloading
     #[clap(value_name = "MUSIC_OR_SINGER")]
     pub music: Vec<String>,
