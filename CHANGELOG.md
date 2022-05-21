@@ -1,6 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2022-05-21
+
+### Bug Fixes
+
+- Update badge for release.yml
+
+### Documentation
+
+- Add rust min version tip
+
+### Features
+
+- Update github release workflow and enable unknown-linux-musl release
+- Add some basic tests
+- Add build info table by `-b` option, fix #15 (#18)
+
+### Miscellaneous Tasks
+
+- Remove bad release targets
+
 ## [0.1.2] - 2022-05-19
 
 ### Bug Fixes
