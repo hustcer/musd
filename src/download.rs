@@ -19,7 +19,7 @@ use yansi::Paint;
 #[tokio::main]
 pub async fn download_music(song: &Song, args: &Args) -> MusdResult<()> {
     let dest_dir = get_dest_directory(args)?;
-    let download_url = get_download_url(song)?;
+    let download_url = get_download_url(song, args)?;
     let download_src = download_url.to_string();
     // println!("{}", &download_url);
     // Get music file extension from download URI
@@ -80,7 +80,7 @@ pub async fn download_music(song: &Song, args: &Args) -> MusdResult<()> {
 /**
  * Get music download url
  */
-fn get_download_url(song: &Song) -> MusdResult<Url> {
+fn get_download_url(song: &Song, args: &Args) -> MusdResult<Url> {
     let sq_format = song
         .new_rate_formats
         .iter()
@@ -92,10 +92,17 @@ fn get_download_url(song: &Song) -> MusdResult<Url> {
         .expect("No super quality format available!");
 
     // println!("{:#?}", &music);
+    // Download .flac format music file by default
     let target = if music.android_url.is_empty() {
         &music.url
     } else {
         &music.android_url
+    };
+
+    // If user prefer to download .m4a format and ios_url is available
+    let target = match args.format {
+        Some(MusicType::M4a) if !music.ios_url.is_empty() => &music.ios_url,
+        _ => target,
     };
     // Use `https` download instead of `ftp`
     let mut download_url = Url::parse(target)?;

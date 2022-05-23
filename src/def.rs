@@ -3,7 +3,7 @@
  * Created: 2022/05/17 13:52:00
  * Description: Commonly used structs
  */
-use clap::Parser;
+use clap::{ArgEnum, Parser};
 use serde::Deserialize;
 use thiserror::Error;
 
@@ -39,6 +39,10 @@ pub struct Args {
     #[clap(short, long, parse(from_os_str), value_name = "PATH")]
     pub output: Option<std::path::PathBuf>,
 
+    /// Preferred music format
+    #[clap(short, long, arg_enum, value_name = "MUSIC_FORMAT")]
+    pub format: Option<MusicType>,
+
     /// Show the CLI build info detail
     #[clap(short, long)]
     pub build_info: bool,
@@ -46,6 +50,13 @@ pub struct Args {
     /// The music or singer name to search for further downloading
     #[clap(value_name = "MUSIC_OR_SINGER")]
     pub music: Vec<String>,
+}
+
+#[derive(ArgEnum, Debug, Clone)]
+#[clap(rename_all = "kebab_case")]
+pub enum MusicType {
+    M4a,
+    Flac,
 }
 
 #[allow(dead_code)]

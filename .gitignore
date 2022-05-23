@@ -1,4 +1,5 @@
 /target
 *.flac
 *.mp3
+*.m4a
 .env
