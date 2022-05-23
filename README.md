@@ -41,7 +41,7 @@ musd someone like you
 musd Celine Dion
 ```
 
-`musd` will download `*.flac` music files by default, if you want `*.m4a` format please specify it by `-f, --format` flag. Currently, only two formats available: 'flac' or 'm4a'.
+`musd` will download `*.flac` format music files by default, if you want `*.m4a` format please specify it by `-f` or `--format` flag. Currently, only two formats available: 'flac' or 'm4a'.
 
 ### Save to a specified folder
 
