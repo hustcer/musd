@@ -78,7 +78,7 @@ pub fn download_selected(songs: Vec<Song>, args: &Args) -> MusdResult<()> {
 
     if sq_songs.is_empty() {
         println!(
-            "Can not find any lossless musics! related to {}, Bye ...",
+            "Can not find any lossless music related to {}, Bye ...",
             Paint::green(&args.music.join(" ")).bold()
         );
         std::process::exit(0);
