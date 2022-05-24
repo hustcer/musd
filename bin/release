@@ -22,21 +22,25 @@ if [[ "ubuntu-latest" = $os ]]; then
 
   cd /usr/share
   wget https://www.openssl.org/source/openssl-1.1.1o.tar.gz
-  tar xzf openssl-1.1.1o.tar.gz
+  tar xzf openssl-1.1.1o.tar.gz && cd openssl-1.1.1o
 
   if [[ "aarch64-unknown-linux-gnu" = $target ]]; then
     sudo apt-get install gcc-aarch64-linux-gnu -y
-    cd openssl-1.1.1o
     ./config shared no-asm no-async --cross-compile-prefix=aarch64-linux-gnu- 1>/dev/null
     # Remove `-m64` string in Makefile
     sed '/-m64/d' Makefile > Makefile.bk && mv Makefile.bk Makefile
-    make 1>/dev/null && cd $src
-    # This is very important here
+    # This is very important here, Otherwise will cause `error adding symbols: file in wrong format`
     export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+  elif [[ "armv7-unknown-linux-gnueabihf" = $target ]]; then
+    sudo apt-get install pkg-config gcc-arm-linux-gnueabihf -y
+    ./config shared no-asm no-async --cross-compile-prefix=arm-linux-gnueabihf- 1>/dev/null
+    sed '/-m64/d' Makefile > Makefile.bk && mv Makefile.bk Makefile
+    export CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER=arm-linux-gnueabihf-gcc
   else
-    cd openssl-1.1.1o && ./config shared 1>/dev/null && make 1>/dev/null && cd $src
+    ./config shared 1>/dev/null
   fi
 
+  make 1>/dev/null && cd $src
   export OPENSSL_LIB_DIR=/usr/share/openssl-1.1.1o/
   export OPENSSL_INCLUDE_DIR=/usr/share/openssl-1.1.1o/include
   # env
