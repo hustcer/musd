@@ -76,6 +76,14 @@ pub fn download_selected(songs: Vec<Song>, args: &Args) -> MusdResult<()> {
         .filter(|s| s.new_rate_formats.iter().any(|f| f.format_type == "SQ"))
         .collect::<Vec<_>>();
 
+    if sq_songs.is_empty() {
+        println!(
+            "Can not find any lossless musics! related to {}, Bye ...",
+            Paint::green(&args.music.join(" ")).bold()
+        );
+        std::process::exit(0);
+    }
+
     // Select one music a time, we can use multiple select later
     let selection = select_music(sq_songs.clone());
 
