@@ -61,7 +61,7 @@ jobs:
     - name: Release musd binary
       id: musd
       shell: bash
-      run: ./bin/release
+      run: ./scripts/release
       env:
         OS: ${{ matrix.os }}
         REF: ${{ github.ref }}

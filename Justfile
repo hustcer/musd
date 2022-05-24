@@ -55,8 +55,8 @@ clippy:
 
 # Release a new version for `setup-nu`
 release updateLog=('false'):
-  @source {{ join(SETUP_MUSD_PATH, 'nu', 'common.nu') }}; \
-    source {{ join(SETUP_MUSD_PATH, 'nu', 'release.nu') }}; \
+  @source {{ join(SETUP_MUSD_PATH, 'scripts', 'common.nu') }}; \
+    source {{ join(SETUP_MUSD_PATH, 'scripts', 'release.nu') }}; \
     git-check --check-repo=1 {{SETUP_MUSD_PATH}}; \
     release --update-log={{updateLog}}
 
