@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2022-05-24
+
+### Features
+
+- Add download m4a format music file support
+- Add x86_64-unknown-linux-gnu release target
+- Add aarch64-unknown-linux-gnu binary release
+
 ## [0.2.0] - 2022-05-21
 
 ### Bug Fixes

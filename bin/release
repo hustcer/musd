@@ -19,14 +19,24 @@ echo "Building $bin..."
 if [[ "ubuntu-latest" = $os ]]; then
   # musl-tools to fix 'Failed to find tool. Is `musl-gcc` installed?'
   sudo apt install musl-tools -y;
-  # export OPENSSL_DIR="/usr/lib/ssl"
-  # export OPENSSL_INCLUDE_DIR="/usr/include/openssl"
-  # export OPENSSL_LIB_DIR="/usr/lib/x86_64-linux-gnu"
 
   cd /usr/share
   wget https://www.openssl.org/source/openssl-1.1.1o.tar.gz
   tar xzf openssl-1.1.1o.tar.gz
-  cd openssl-1.1.1o && ./config shared 1>/dev/null && make 1>/dev/null && cd $src
+
+  if [[ "aarch64-unknown-linux-gnu" = $target ]]; then
+    sudo apt-get install gcc-aarch64-linux-gnu -y
+    cd openssl-1.1.1o
+    ./config shared no-asm no-async --cross-compile-prefix=aarch64-linux-gnu- 1>/dev/null
+    # Remove `-m64` string in Makefile
+    sed '/-m64/d' Makefile > Makefile.bk && mv Makefile.bk Makefile
+    make 1>/dev/null && cd $src
+    # This is very important here
+    export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+  else
+    cd openssl-1.1.1o && ./config shared 1>/dev/null && make 1>/dev/null && cd $src
+  fi
+
   export OPENSSL_LIB_DIR=/usr/share/openssl-1.1.1o/
   export OPENSSL_INCLUDE_DIR=/usr/share/openssl-1.1.1o/include
   # env
