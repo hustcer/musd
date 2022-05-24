@@ -55,18 +55,18 @@ jobs:
       uses: actions-rs/toolchain@v1.0.6
       with:
         override: true
-        target: ${{ matrix.target }}
         toolchain: stable
+        target: ${{ matrix.target }}
 
     - name: Release musd binary
       id: musd
-      env:
-        TARGET: ${{ matrix.target }}
-        REF: ${{ github.ref }}
-        OS: ${{ matrix.os }}
-        TARGET_RUSTFLAGS: ${{ matrix.target_rustflags }}
-      run: ./bin/release
       shell: bash
+      run: ./bin/release
+      env:
+        OS: ${{ matrix.os }}
+        REF: ${{ github.ref }}
+        TARGET: ${{ matrix.target }}
+        TARGET_RUSTFLAGS: ${{ matrix.target_rustflags }}
 
     # REF: https://github.com/marketplace/actions/gh-release
     - name: Publish Archive

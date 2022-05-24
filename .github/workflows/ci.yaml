@@ -20,8 +20,8 @@ jobs:
     strategy:
       matrix:
         os:
-        - ubuntu-latest
         - macos-latest
+        - ubuntu-latest
         - windows-latest
 
     runs-on: ${{matrix.os}}
@@ -43,9 +43,9 @@ jobs:
     - name: Install Rust Toolchain Components
       uses: actions-rs/toolchain@v1.0.6
       with:
-        components: clippy, rustfmt
         override: true
-        toolchain: 1.61.0
+        toolchain: stable
+        components: clippy, rustfmt
 
     - uses: Swatinem/rust-cache@v1.3.0
 

@@ -60,11 +60,11 @@ esac
 echo "Copying release files..."
 mkdir dist
 cp \
-  $executable \
-  Cargo.lock \
-  Cargo.toml \
   LICENSE \
   README.md \
+  Cargo.lock \
+  Cargo.toml \
+  $executable \
   CHANGELOG.md \
   README.zh-CN.md \
   $dist
