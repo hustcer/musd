@@ -17,10 +17,16 @@ jobs:
     strategy:
       matrix:
         target:
-        - x86_64-unknown-linux-gnu
+        - x86_64-pc-windows-msvc
+        extra: [none]
         include:
-        - target: x86_64-unknown-linux-gnu
-          os: ubuntu-latest
+        - target: x86_64-pc-windows-msvc
+          extra: 'none'
+          os: windows-latest
+          target_rustflags: ''
+        - target: x86_64-pc-windows-msvc
+          extra: 'msi'
+          os: windows-latest
           target_rustflags: ''
 
     runs-on: ${{matrix.os}}
@@ -39,6 +45,8 @@ jobs:
       uses: hustcer/setup-nu@v1
       with:
         version: 0.62.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Release musd binary
       id: musd
@@ -46,8 +54,9 @@ jobs:
         OS: ${{ matrix.os }}
         REF: ${{ github.ref }}
         TARGET: ${{ matrix.target }}
+        _EXTRA_: ${{ matrix.extra }}
         TARGET_RUSTFLAGS: ${{ matrix.target_rustflags }}
-      run: ./scripts/release-pkg.nu
+      run: nu ./scripts/release-pkg.nu
       shell: nu {0}
 
     # REF: https://github.com/marketplace/actions/gh-release
