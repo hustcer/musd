@@ -27,7 +27,7 @@ jobs:
         - x86_64-unknown-linux-gnu
         - aarch64-unknown-linux-gnu
         - armv7-unknown-linux-gnueabihf
-        extra: ['']
+        extra: ['bin']
         include:
         - target: aarch64-apple-darwin
           os: macos-latest
@@ -36,7 +36,7 @@ jobs:
           os: macos-latest
           target_rustflags: ''
         - target: x86_64-pc-windows-msvc
-          extra: ''
+          extra: 'bin'
           os: windows-latest
           target_rustflags: ''
         - target: x86_64-pc-windows-msvc
@@ -82,6 +82,7 @@ jobs:
         OS: ${{ matrix.os }}
         REF: ${{ github.ref }}
         TARGET: ${{ matrix.target }}
+        _EXTRA_: ${{ matrix.extra }}
         TARGET_RUSTFLAGS: ${{ matrix.target_rustflags }}
 
     # REF: https://github.com/marketplace/actions/gh-release
