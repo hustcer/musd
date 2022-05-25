@@ -52,7 +52,7 @@ case $os in
     executable=target/$target/release/$bin
     ;;
   windows-latest)
-    cargo rustc --bin $bin --target $target --release -- -C target-feature="+crt-static"
+    cargo rustc --bin $bin --target $target --release
     executable=target/$target/release/$bin.exe
     ;;
 esac

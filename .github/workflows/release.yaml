@@ -58,10 +58,16 @@ jobs:
         toolchain: stable
         target: ${{ matrix.target }}
 
+    - name: Setup Nushell
+      uses: hustcer/setup-nu@v1
+      with:
+        version: 0.62.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Release musd binary
       id: musd
-      shell: bash
-      run: ./scripts/release
+      run: nu ./scripts/release-pkg.nu
       env:
         OS: ${{ matrix.os }}
         REF: ${{ github.ref }}

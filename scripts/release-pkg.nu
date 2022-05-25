@@ -59,8 +59,8 @@ if $os == 'ubuntu-latest' {
     }
 }
 
-if $os == 'windows-latest' {
-    cd $src; cargo rustc --bin $bin --target $target --release -- -C target-feature="+crt-static"
+if $os in ['windows-latest', 'macos-latest'] {
+    cd $src; cargo rustc --bin $bin --target $target --release
 }
 
 let suffix = if $os == 'windows-latest' { '.exe' } else { '' }
@@ -73,15 +73,19 @@ echo [LICENSE README.md Cargo.lock Cargo.toml CHANGELOG.md README.zh-CN.md $exec
 cd $dist; $'Creating release archive...'
 
 if $os in ['ubuntu-latest', 'macos-latest'] {
+
     let archive = $'($dist)/($bin)-($version)-($target).tar.gz'
     tar czf $archive *
     print $'archive: ---> ($archive)'; ls $archive
-    # It's weird that `^echo $'::set-output name=archive::($archive)'` doesn't work
-    echo $archive
+    echo $'::set-output name=archive::($archive)'
+
 } else if $os == 'windows-latest' {
-    let pwd = (pwd -W)
+
     let archive = $'($dist)/($bin)-($version)-($target).zip'
     7z a $archive *
-    print $'archive: ---> ($archive)'; ls $archive
-    echo $'($pwd)/($bin)-($version)-($target).zip'
+    print $'archive: ---> ($archive)';
+    let pkg = (ls -f $archive | get name)
+    if not ($pkg | empty?) {
+        echo $'::set-output name=archive::($pkg | get 0)'
+    }
 }
