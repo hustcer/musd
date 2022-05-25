@@ -6,6 +6,7 @@
 #   A script to do the github release task, need nushell to be installed.
 #
 
+# The binary file to be released
 let bin = 'musd'
 let os = $env.OS
 let target = $env.TARGET
@@ -14,17 +15,17 @@ let src = $env.GITHUB_WORKSPACE
 let dist = $'($env.GITHUB_WORKSPACE)/dist'
 let version = (open Cargo.toml | get package.version)
 
-$'Packaging ($bin) v($version) for ($target) in ($src)...'
+$'Packaging ($bin) v($version) for ($target) in ($src)...'; hr-line -b
 if not ('Cargo.lock' | path exists) {
     cargo generate-lockfile
 }
 
-$'Building ($bin)...'
+$'Start building ($bin)...'; hr-line
 
-# Fix OpenSSL related issues on Ubuntu
+# ----------------------------------------------------------------------------
+# Fix OpenSSL related issues on Ubuntu and then build the release binary
+# ----------------------------------------------------------------------------
 if $os == 'ubuntu-latest' {
-    # musl-tools to fix 'Failed to find tool. Is `musl-gcc` installed?'
-    sudo apt install musl-tools -y
 
     cd /usr/share
     wget https://www.openssl.org/source/openssl-1.1.1o.tar.gz
@@ -53,25 +54,36 @@ if $os == 'ubuntu-latest' {
         cd $src; cargo rustc --bin $bin --target $target --release
 
     } else {
+
+        # musl-tools to fix 'Failed to find tool. Is `musl-gcc` installed?'
+        sudo apt install musl-tools -y
         let configure = (./config shared | complete); print ($configure | get stderr)
         let make = (make | complete); print ($make | get stderr)
         cd $src; cargo rustc --bin $bin --target $target --release
     }
 }
 
+# ----------------------------------------------------------------------------
+# Build for Windows and macOS
+# ----------------------------------------------------------------------------
 if $os in ['windows-latest', 'macos-latest'] {
     cd $src; cargo rustc --bin $bin --target $target --release
 }
 
+# ----------------------------------------------------------------------------
+# Prepare for the release archive
+# ----------------------------------------------------------------------------
 let suffix = if $os == 'windows-latest' { '.exe' } else { '' }
 let executable = $'target/($target)/release/($bin)($suffix)'
-
 $'Current executable file: ($executable)'
 $'Copying release files...'
 cd $src; mkdir $dist
-echo [LICENSE README.md Cargo.lock Cargo.toml CHANGELOG.md README.zh-CN.md $executable] | each {|it| cp $it $dist }
-cd $dist; $'Creating release archive...'
+echo [LICENSE README* CHANGELOG.md Cargo.* $executable] | each {|it| cp -r $it $dist }
+cd $dist; $'Creating release archive...'; hr-line
 
+# ----------------------------------------------------------------------------
+# Create a release archive and send it to output for the following steps
+# ----------------------------------------------------------------------------
 if $os in ['ubuntu-latest', 'macos-latest'] {
 
     let archive = $'($dist)/($bin)-($version)-($target).tar.gz'
@@ -88,4 +100,12 @@ if $os in ['ubuntu-latest', 'macos-latest'] {
     if not ($pkg | empty?) {
         echo $'::set-output name=archive::($pkg | get 0)'
     }
+}
+
+# Print a horizontal line marker
+def 'hr-line' [
+  --blank-line(-b): bool
+] {
+  print $'(ansi g)---------------------------------------------------------------------------->(ansi reset)'
+  if $blank-line { char nl }
 }
