@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.3] - 2022-05-25
+
+### Features
+
+- Try to do the Github release task by nushell
+- Use nushell instead of bash to do the release task
+- Add windows msi release package
+
+### Miscellaneous Tasks
+
+- Improve release-pkg script
+
 ## [0.2.1] - 2022-05-24
 
 ### Features
