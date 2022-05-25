@@ -1,3 +1,7 @@
+#
+# REF:
+#   1. https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstrategymatrixinclude
+#
 name: Release
 
 on:
@@ -23,6 +27,7 @@ jobs:
         - x86_64-unknown-linux-gnu
         - aarch64-unknown-linux-gnu
         - armv7-unknown-linux-gnueabihf
+        extra: ['']
         include:
         - target: aarch64-apple-darwin
           os: macos-latest
@@ -31,6 +36,11 @@ jobs:
           os: macos-latest
           target_rustflags: ''
         - target: x86_64-pc-windows-msvc
+          extra: ''
+          os: windows-latest
+          target_rustflags: ''
+        - target: x86_64-pc-windows-msvc
+          extra: msi
           os: windows-latest
           target_rustflags: ''
         - target: x86_64-unknown-linux-musl

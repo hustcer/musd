@@ -4,7 +4,8 @@
 # Created: 2022/05/24 17:05:20
 # Description:
 #   A script to do the github release task, need nushell to be installed.
-#
+# REF:
+#   1. https://github.com/volks73/cargo-wix
 
 # The binary file to be released
 let bin = 'musd'
@@ -93,12 +94,28 @@ if $os in ['ubuntu-latest', 'macos-latest'] {
 
 } else if $os == 'windows-latest' {
 
-    let archive = $'($dist)/($bin)-($version)-($target).zip'
-    7z a $archive *
-    print $'archive: ---> ($archive)';
-    let pkg = (ls -f $archive | get name)
-    if not ($pkg | empty?) {
-        echo $'::set-output name=archive::($pkg | get 0)'
+    let releaseStem = $'($bin)-($version)-($target)'
+
+    if (get-env _EXTRA_) == 'msi' {
+        # Create Windows msi release package
+        $'Start creating Windows msi package...'
+        cd $src; hr-line -b
+        mkdir target/release; cp $executable target/release/
+        let wixRelease = $'($src)/target/wix/($releaseStem).msi'
+        cargo install cargo-wix --version 0.3.2
+        cargo wix init
+        cargo wix --no-build --nocapture --output $wixRelease
+        echo $'::set-output name=archive::($wixRelease)'
+
+    } else {
+
+        let archive = $'($dist)/($releaseStem).zip'
+        7z a $archive *
+        print $'archive: ---> ($archive)';
+        let pkg = (ls -f $archive | get name)
+        if not ($pkg | empty?) {
+            echo $'::set-output name=archive::($pkg | get 0)'
+        }
     }
 }
 
@@ -108,4 +125,12 @@ def 'hr-line' [
 ] {
   print $'(ansi g)---------------------------------------------------------------------------->(ansi reset)'
   if $blank-line { char nl }
+}
+
+# Get the specified env key's value or ''
+def 'get-env' [
+  key: string           # The key to get it's env value
+  default: string = ''  # The default value for an empty env
+] {
+  $env | get -i $key | default $default
 }
