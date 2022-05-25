@@ -1,0 +1,61 @@
+name: Build more binary
+on:
+  push:
+    branches:
+    - release
+    tags:
+    - 'v*'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  all:
+    name: All
+
+    strategy:
+      matrix:
+        target:
+        - x86_64-unknown-linux-gnu
+        include:
+        - target: x86_64-unknown-linux-gnu
+          os: ubuntu-latest
+          target_rustflags: ''
+
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - uses: actions/checkout@v3.0.2
+
+    - name: Install Rust Toolchain Components
+      uses: actions-rs/toolchain@v1.0.6
+      with:
+        override: true
+        target: ${{ matrix.target }}
+        toolchain: stable
+
+    - name: Setup Nushell
+      uses: hustcer/setup-nu@v1
+      with:
+        version: 0.62.0
+
+    - name: Release musd binary
+      id: musd
+      env:
+        OS: ${{ matrix.os }}
+        REF: ${{ github.ref }}
+        TARGET: ${{ matrix.target }}
+        TARGET_RUSTFLAGS: ${{ matrix.target_rustflags }}
+      run: ./scripts/release-pkg.nu
+      shell: nu {0}
+
+    # REF: https://github.com/marketplace/actions/gh-release
+    - name: Publish Archive
+      uses: softprops/action-gh-release@v1
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      with:
+        draft: true
+        files: ${{ steps.musd.outputs.archive }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
