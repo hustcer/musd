@@ -61,7 +61,7 @@ let executable = $'target/($target)/release/($bin)($suffix)'
 $'Current executable file: ($executable)'
 $'Copying release files...'
 cd $src; mkdir $dist
-echo [LICENSE README* CHANGELOG.md Cargo.* $executable] | each {|it| cp -r $it $dist }
+echo [LICENSE README* CHANGELOG.md $executable] | each {|it| cp -r $it $dist }
 cd $dist; $'Creating release archive...'; hr-line
 
 # ----------------------------------------------------------------------------
