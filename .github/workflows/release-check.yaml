@@ -1,0 +1,47 @@
+name: Musd Release Pkg Check
+
+on:
+  push:
+    branches:
+      - release-check
+    paths-ignore:
+      - '**.md'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  musd_release_check:
+    runs-on: ubuntu-latest
+    name: Running MUSD on ${{ matrix.distro }} ${{ matrix.arch }}
+    # Run steps on a matrix of 3 arch/distro combinations
+    strategy:
+      matrix:
+        include:
+          - arch: armv7
+            distro: ubuntu_latest
+            uri: https://github.com/hustcer/musd/releases/download/v0.2.5/musd-0.2.5-armv7-unknown-linux-gnueabihf.tar.gz
+          - arch: aarch64
+            distro: ubuntu_latest
+            uri: https://github.com/hustcer/musd/releases/download/v0.2.5/musd-0.2.5-aarch64-unknown-linux-gnu.tar.gz
+
+    steps:
+      - uses: uraimo/run-on-arch-action@v2
+        name: MUSD Release Check
+        id: run_musd
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+          githubToken: ${{ github.token }}
+          run: |
+            apt-get update; apt-get install aria2 -y; echo;
+            echo '--------------------------------------------------------------------'
+            uname -a;
+            echo '--------------------------------------------------------------------'
+            cd /usr/lib; aria2c ${{ matrix.uri }}; mkdir musd-pkg
+            tar xvf musd*.tar.gz --directory=musd-pkg
+            echo '--------------------------------------------------------------------'
+            cd musd-pkg; ls -l
+            echo '--------------------------------------------------------------------'
+            ./musd -b
