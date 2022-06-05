@@ -62,11 +62,21 @@ $'Current executable file: ($executable)'
 $'Copying release files...'
 cd $src; mkdir $dist
 echo [LICENSE README* CHANGELOG.md $executable] | each {|it| cp -r $it $dist }
-cd $dist; $'Creating release archive...'; hr-line
+
+$'(char nl)Check binary release build detail:'; hr-line; cd dist;
+let info = if $os == 'windows-latest' {
+    (do -i { ./musd.exe -b }) | str collect
+} else {
+    (do -i { ./musd -b }) | str collect
+}
+if ($info | str trim | empty?) {
+    $'(ansi r)Incompatible nu binary...(ansi reset)'
+} else { $info }
 
 # ----------------------------------------------------------------------------
 # Create a release archive and send it to output for the following steps
 # ----------------------------------------------------------------------------
+cd $dist; $'(char nl)Creating release archive...'; hr-line
 if $os in ['ubuntu-latest', 'macos-latest'] {
 
     let archive = $'($dist)/($bin)-($version)-($target).tar.gz'
