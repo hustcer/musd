@@ -24,9 +24,9 @@ if not ('Cargo.lock' | path exists) {
 
 $'Start building ($bin)...'; hr-line
 
-# ----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 # Fix OpenSSL related issues on Ubuntu and then build the release binary
-# ----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 if $os == 'ubuntu-latest' {
     if $target == 'aarch64-unknown-linux-gnu' {
         sudo apt-get install gcc-aarch64-linux-gnu -y
@@ -46,16 +46,19 @@ if $os == 'ubuntu-latest' {
     }
 }
 
-# ----------------------------------------------------------------------------
-# Build for Windows and macOS
-# ----------------------------------------------------------------------------
-if $os in ['windows-latest', 'macos-latest'] {
-    cargo rustc --bin $bin --target $target --release
-}
+# ---------------------------------------------------------------------------------
+# Build for macOS
+# ---------------------------------------------------------------------------------
+if $os in ['macos-latest'] { cargo-build-musd $flags }
 
-# ----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
+# Build for Windows
+# ---------------------------------------------------------------------------------
+if $os in ['windows-latest'] { cargo rustc --bin $bin --target $target --release }
+
+# ---------------------------------------------------------------------------------
 # Prepare for the release archive
-# ----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 let suffix = if $os == 'windows-latest' { '.exe' } else { '' }
 let executable = $'target/($target)/release/($bin)($suffix)'
 $'Current executable file: ($executable)'
@@ -63,9 +66,13 @@ $'Copying release files...'
 cd $src; mkdir $dist
 echo [LICENSE README* CHANGELOG.md $executable] | each {|it| cp -r $it $dist }
 
-$'(char nl)Check binary release build detail:'; hr-line; cd dist;
+$'(char nl)Dist directory contents:'; hr-line;
+cd $dist; ls -f
+
+$'(char nl)Check binary release build detail:'; hr-line;
 let info = if $os == 'windows-latest' {
-    (do -i { ./musd.exe -b }) | str collect
+    # Use `.\musd.exe` works, but `./musd.exe` doesn't
+    (do -i { .\musd.exe -b }) | str collect
 } else {
     (do -i { ./musd -b }) | str collect
 }
@@ -73,10 +80,10 @@ if ($info | str trim | empty?) {
     $'(ansi r)Incompatible nu binary...(ansi reset)'
 } else { $info }
 
-# ----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------
 # Create a release archive and send it to output for the following steps
-# ----------------------------------------------------------------------------
-cd $dist; $'(char nl)Creating release archive...'; hr-line
+# ---------------------------------------------------------------------------------
+$'(char nl)Creating release archive...'; hr-line
 if $os in ['ubuntu-latest', 'macos-latest'] {
 
     let archive = $'($dist)/($bin)-($version)-($target).tar.gz'
