@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.2.5] - 2022-06-06
+
+### Bug Fixes
+
+- Fix build info check for release packages
+
+### Features
+
+- Bump version v0.2.5 and use static-link-openssl for linux
+- Add release-check workflow to test musd binary
+- Add build info check for package release
+
+### Miscellaneous Tasks
+
+- Remove cargo* from release package
+
 ## [0.2.3] - 2022-05-25
 
 ### Features
