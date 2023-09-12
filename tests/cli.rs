@@ -15,7 +15,7 @@ fn runs_empty() {
 #[test]
 fn runs_help() -> TestResult {
     Command::cargo_bin("musd")?
-        .args(&["-h"])
+        .args(["-h"])
         .assert()
         .success()
         .stdout(predicate::str::contains("USAGE:\n"));
