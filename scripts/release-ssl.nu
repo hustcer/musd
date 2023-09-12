@@ -16,12 +16,12 @@ let src = $env.GITHUB_WORKSPACE
 let dist = $'($env.GITHUB_WORKSPACE)/dist'
 let version = (open Cargo.toml | get package.version)
 
-$'Packaging ($bin) v($version) for ($target) in ($src)...'; hr-line -b
+print $'Packaging ($bin) v($version) for ($target) in ($src)...'; hr-line -b
 if not ('Cargo.lock' | path exists) {
     cargo generate-lockfile
 }
 
-$'Start building ($bin)...'; hr-line
+print $'Start building ($bin)...'; hr-line
 
 # ---------------------------------------------------------------------------------
 # Fix OpenSSL related issues on Ubuntu and then build the release binary
@@ -76,15 +76,15 @@ if $os in ['windows-latest', 'macos-latest'] {
 # ---------------------------------------------------------------------------------
 let suffix = if $os == 'windows-latest' { '.exe' } else { '' }
 let executable = $'target/($target)/release/($bin)($suffix)'
-$'Current executable file: ($executable)'
-$'Copying release files...'
+print $'Current executable file: ($executable)'
+print $'Copying release files...'
 cd $src; mkdir $dist
 echo [LICENSE README* CHANGELOG.md $executable] | each {|it| cp -r $it $dist }
 
-$'(char nl)Dist directory contents:'; hr-line;
+print $'(char nl)Dist directory contents:'; hr-line;
 cd $dist; ls -f
 
-$'(char nl)Check binary release build detail:'; hr-line;
+print $'(char nl)Check binary release build detail:'; hr-line;
 let info = if $os == 'windows-latest' {
     # Use `.\musd.exe` works, but `./musd.exe` doesn't
     (do -i { .\musd.exe -b }) | str collect
@@ -92,13 +92,13 @@ let info = if $os == 'windows-latest' {
     (do -i { ./musd -b }) | str collect
 }
 if ($info | str trim | empty?) {
-    $'(ansi r)Incompatible nu binary...(ansi reset)'
+    print $'(ansi r)Incompatible nu binary...(ansi reset)'
 } else { $info }
 
 # ---------------------------------------------------------------------------------
 # Create a release archive and send it to output for the following steps
 # ---------------------------------------------------------------------------------
-$'Creating release archive...'; hr-line
+print $'Creating release archive...'; hr-line
 if $os in ['ubuntu-latest', 'macos-latest'] {
 
     let archive = $'($dist)/($bin)-($version)-($target).tar.gz'
@@ -112,7 +112,7 @@ if $os in ['ubuntu-latest', 'macos-latest'] {
 
     if (get-env _EXTRA_) == 'msi' {
         # Create Windows msi release package
-        $'Start creating Windows msi package...'
+        print $'Start creating Windows msi package...'
         cd $src; hr-line -b
         mkdir target/release; cp $executable target/release/
         let wixRelease = $'($src)/target/wix/($releaseStem).msi'
@@ -134,11 +134,14 @@ if $os in ['ubuntu-latest', 'macos-latest'] {
 }
 
 # Print a horizontal line marker
-def 'hr-line' [
-  --blank-line(-b): bool
+export def 'hr-line' [
+  width?: int = 90,
+  --color(-c): string = 'g',
+  --blank-line(-b): bool,
+  --with-arrow(-a): bool,
 ] {
-  print $'(ansi g)---------------------------------------------------------------------------->(ansi reset)'
-  if $blank-line { char nl }
+  print $'(ansi $color)('─' * $width)(if $with_arrow {'>'})(ansi reset)'
+  if $blank_line { char nl }
 }
 
 # Get the specified env key's value or ''
