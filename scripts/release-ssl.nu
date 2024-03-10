@@ -118,7 +118,7 @@ if $os in ['ubuntu-latest', 'macos-latest'] {
         cd $src; hr-line -b
         mkdir target/release; cp $executable target/release/
         let wixRelease = $'($src)/target/wix/($releaseStem).msi'
-        cargo install cargo-wix --version 0.3.2
+        cargo install cargo-wix --version 0.3.8
         cargo wix init
         cargo wix --no-build --nocapture --output $wixRelease
         let archive = ($wixRelease | str replace --all '\' '/')
