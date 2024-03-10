@@ -69,7 +69,7 @@ cd $src; mkdir $dist
 echo [LICENSE README* CHANGELOG.md $executable] | each {|it| cp -r $it $dist }
 
 print $'(char nl)Dist directory contents:'; hr-line;
-cd $dist; ls -f
+cd $dist; ls -f | print
 
 print $'(char nl)Check binary release build detail:'; hr-line;
 let info = if $os == 'windows-latest' {
@@ -80,7 +80,7 @@ let info = if $os == 'windows-latest' {
 }
 if ($info | str trim | is-empty) {
     print $'(ansi r)Incompatible nu binary...(ansi reset)'
-} else { $info }
+} else { print $info }
 
 # ---------------------------------------------------------------------------------
 # Create a release archive and send it to output for the following steps
@@ -90,7 +90,7 @@ if $os in ['ubuntu-latest', 'macos-latest'] {
 
     let archive = $'($dist)/($bin)-($version)-($target).tar.gz'
     tar czf $archive *
-    print $'archive: ---> ($archive)'; ls $archive
+    print $'archive: ---> ($archive)'; ls $archive | print
     echo $"archive=($archive)" o>> $env.GITHUB_OUTPUT
 
 } else if $os == 'windows-latest' {
