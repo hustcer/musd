@@ -7,6 +7,8 @@
 # REF:
 #   1. https://github.com/volks73/cargo-wix
 
+use common.nu [hr-line, get-env]
+
 # The binary file to be released
 let bin = 'musd'
 let os = $env.OS
@@ -87,9 +89,9 @@ cd $dist; ls -f
 print $'(char nl)Check binary release build detail:'; hr-line;
 let info = if $os == 'windows-latest' {
     # Use `.\musd.exe` works, but `./musd.exe` doesn't
-    (do -i { .\musd.exe -b }) | str collect
+    (do -i { .\musd.exe -b }) | str join
 } else {
-    (do -i { ./musd -b }) | str collect
+    (do -i { ./musd -b }) | str join
 }
 if ($info | str trim | empty?) {
     print $'(ansi r)Incompatible nu binary...(ansi reset)'
@@ -133,21 +135,3 @@ if $os in ['ubuntu-latest', 'macos-latest'] {
     }
 }
 
-# Print a horizontal line marker
-export def 'hr-line' [
-  width?: int = 90,
-  --color(-c): string = 'g',
-  --blank-line(-b): bool,
-  --with-arrow(-a): bool,
-] {
-  print $'(ansi $color)('─' * $width)(if $with_arrow {'>'})(ansi reset)'
-  if $blank_line { char nl }
-}
-
-# Get the specified env key's value or ''
-def 'get-env' [
-  key: string           # The key to get it's env value
-  default: string = ''  # The default value for an empty env
-] {
-  $env | get -i $key | default $default
-}

@@ -7,6 +7,8 @@
 # REF:
 #   1. https://github.com/volks73/cargo-wix
 
+use common.nu [hr-line, get-env]
+
 # The binary file to be released
 let bin = 'musd'
 let os = $env.OS
@@ -124,23 +126,4 @@ def 'cargo-build-musd' [ options: string ] {
     } else {
         cargo rustc --bin $bin --target $target --release --features=static-link-openssl $options
     }
-}
-
-# Print a horizontal line marker
-export def 'hr-line' [
-  width?: int = 90,
-  --color(-c): string = 'g',
-  --blank-line(-b): bool,
-  --with-arrow(-a): bool,
-] {
-  print $'(ansi $color)('─' * $width)(if $with_arrow {'>'})(ansi reset)'
-  if $blank_line { char nl }
-}
-
-# Get the specified env key's value or ''
-def 'get-env' [
-  key: string           # The key to get it's env value
-  default: string = ''  # The default value for an empty env
-] {
-  $env | get -i $key | default $default
 }

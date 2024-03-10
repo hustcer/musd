@@ -88,7 +88,7 @@ fn get_download_url(song: &Song, args: &Args) -> MusdResult<Url> {
         .collect::<Vec<_>>();
 
     let music = sq_format
-        .get(0)
+        .first()
         .expect("No super quality format available!");
 
     // println!("{:#?}", &music);

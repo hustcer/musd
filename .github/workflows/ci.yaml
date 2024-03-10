@@ -30,7 +30,7 @@ jobs:
       RUSTFLAGS: --deny warnings
 
     steps:
-    - uses: actions/checkout@v4.0.0
+    - uses: actions/checkout@v4.1.1
 
     - name: Remove Broken WSL bash executable
       if: ${{ matrix.os == 'windows-latest' }}
@@ -47,7 +47,7 @@ jobs:
         toolchain: stable
         components: clippy, rustfmt
 
-    - uses: Swatinem/rust-cache@v1.3.0
+    - uses: Swatinem/rust-cache@v2.7.3
 
     - name: Check Lockfile
       run: |
