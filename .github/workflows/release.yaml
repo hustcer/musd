@@ -61,10 +61,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4.1.1
 
-    - name: Install Rust Toolchain Components
-      uses: actions-rs/toolchain@v1.0.6
+    - name: Setup Rust toolchain and cache
+      uses: actions-rust-lang/setup-rust-toolchain@v1.8.0
       with:
-        override: true
         toolchain: stable
         target: ${{ matrix.target }}
 

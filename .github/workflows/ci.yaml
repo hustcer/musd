@@ -40,10 +40,9 @@ jobs:
         icacls C:\Windows\System32\bash.exe /grant administrators:F
         del C:\Windows\System32\bash.exe
 
-    - name: Install Rust Toolchain Components
-      uses: actions-rs/toolchain@v1.0.6
+    - name: Setup Rust toolchain and cache
+      uses: actions-rust-lang/setup-rust-toolchain@v1.8.0
       with:
-        override: true
         toolchain: stable
         components: clippy, rustfmt
 
