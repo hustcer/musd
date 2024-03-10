@@ -34,8 +34,8 @@ if $os == 'ubuntu-latest' {
     wget https://www.openssl.org/source/openssl-1.1.1o.tar.gz
     tar xzf openssl-1.1.1o.tar.gz; cd openssl-1.1.1o
 
-    let-env OPENSSL_LIB_DIR = '/usr/share/openssl-1.1.1o/'
-    let-env OPENSSL_INCLUDE_DIR = '/usr/share/openssl-1.1.1o/include'
+    $env.OPENSSL_LIB_DIR = '/usr/share/openssl-1.1.1o/'
+    $env.OPENSSL_INCLUDE_DIR = '/usr/share/openssl-1.1.1o/include'
     if $target == 'aarch64-unknown-linux-gnu' {
         sudo apt-get install gcc-aarch64-linux-gnu -y
         let configure = (./config shared no-asm no-async --cross-compile-prefix=aarch64-linux-gnu- | complete)
@@ -44,7 +44,7 @@ if $os == 'ubuntu-latest' {
         sed '/-m64/d' Makefile | save Makefile.bk; mv Makefile.bk Makefile
         let make = (make | complete); print ($make | get stderr)
         # This is very important here, Otherwise will cause `error adding symbols: file in wrong format`
-        let-env CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER = 'aarch64-linux-gnu-gcc'
+        $env.CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER = 'aarch64-linux-gnu-gcc'
         cd $src; cargo rustc --bin $bin --target $target --release
 
     } else if $target == 'armv7-unknown-linux-gnueabihf' {
@@ -53,7 +53,7 @@ if $os == 'ubuntu-latest' {
         print ($configure | get stderr)
         sed '/-m64/d' Makefile | save Makefile.bk; mv Makefile.bk Makefile
         let make = (make | complete); print ($make | get stderr)
-        let-env CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER = 'arm-linux-gnueabihf-gcc'
+        $env.CARGO_TARGET_ARMV7_UNKNOWN_LINUX_GNUEABIHF_LINKER = 'arm-linux-gnueabihf-gcc'
         cd $src; cargo rustc --bin $bin --target $target --release
 
     } else {
@@ -93,7 +93,7 @@ let info = if $os == 'windows-latest' {
 } else {
     (do -i { ./musd -b }) | str join
 }
-if ($info | str trim | empty?) {
+if ($info | str trim | is-empty) {
     print $'(ansi r)Incompatible nu binary...(ansi reset)'
 } else { $info }
 
@@ -106,7 +106,7 @@ if $os in ['ubuntu-latest', 'macos-latest'] {
     let archive = $'($dist)/($bin)-($version)-($target).tar.gz'
     tar czf $archive *
     print $'archive: ---> ($archive)'; ls $archive
-    echo $'::set-output name=archive::($archive)'
+    echo $"archive=($archive)" o>> $env.GITHUB_OUTPUT
 
 } else if $os == 'windows-latest' {
 
@@ -121,7 +121,8 @@ if $os in ['ubuntu-latest', 'macos-latest'] {
         cargo install cargo-wix --version 0.3.2
         cargo wix init
         cargo wix --no-build --nocapture --output $wixRelease
-        echo $'::set-output name=archive::($wixRelease)'
+        let archive = ($wixRelease | str replace --all '\' '/')
+        echo $"archive=($archive)" o>> $env.GITHUB_OUTPUT
 
     } else {
 
@@ -129,8 +130,9 @@ if $os in ['ubuntu-latest', 'macos-latest'] {
         7z a $archive *
         print $'archive: ---> ($archive)';
         let pkg = (ls -f $archive | get name)
-        if not ($pkg | empty?) {
-            echo $'::set-output name=archive::($pkg | get 0)'
+        if not ($pkg | is-empty) {
+            let archive = ($pkg | get 0 | str replace --all '\' '/')
+            echo $"archive=($archive)" o>> $env.GITHUB_OUTPUT
         }
     }
 }

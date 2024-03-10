@@ -24,7 +24,7 @@ def 'release' [
   	exit 1
   }
   let statusCheck = (git status --porcelain)
-  if not ($statusCheck | empty?) {
+  if not ($statusCheck | is-empty) {
   	print $'You have uncommit changes, please commit them and try `release` again!(char nl)'
   	exit 1
   }
