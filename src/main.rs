@@ -13,7 +13,7 @@ fn main() {
     let args = musd::Args::parse();
     // Disable coloring by `CLICOLOR` env variable
     if let Ok(true) = std::env::var("CLICOLOR").map(|v| v == "0") {
-        Paint::disable();
+        yansi::disable();
     }
 
     if args.build_info {
@@ -24,7 +24,7 @@ fn main() {
     if let Err(e) =
         musd::search(&args.music.join(" ")).and_then(|songs| musd::download_selected(songs, &args))
     {
-        eprintln!("[ERROR]: {}", Paint::red(e));
+        eprintln!("[ERROR]: {}", Paint::red(&e));
         std::process::exit(1);
     }
 }

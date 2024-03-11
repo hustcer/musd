@@ -91,7 +91,7 @@ pub fn download_selected(songs: Vec<Song>, args: &Args) -> MusdResult<()> {
     // println!("Start to download {}!", Paint::green(&selections[selection]));
 
     if let Err(e) = download::download_music(sq_songs[selection], args) {
-        eprintln!("[ERROR]: {}", Paint::red(e));
+        eprintln!("[ERROR]: {}", Paint::red(&e));
         std::process::exit(2);
     }
     Ok(())
