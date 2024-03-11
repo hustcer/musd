@@ -4,13 +4,18 @@
  * Description: Show the build info of this App
  */
 use shadow_rs::shadow;
-use tabled::{object::Segment, style::Style, Alignment, Extract, Modify, TableIteratorExt};
+use tabled::Table;
+use tabled::{
+    settings::object::Segment, settings::Alignment, settings::Extract, settings::Modify,
+    settings::Style,
+};
 
 shadow!(build);
 
 pub fn show_info() {
     let is_debug = format!("{}", shadow_rs::is_debug());
     let data = vec![
+        ["Key", "Value"],
         ["debug", is_debug.as_str()],
         ["pkg_version", build::PKG_VERSION],
         ["release_tag", build::TAG],
@@ -23,9 +28,9 @@ pub fn show_info() {
         ["rust_version", build::RUST_VERSION],
     ];
 
-    let table = data
-        .table()
-        .with(Style::github_markdown()) // psql, blank, github_markdown
+    let mut table = Table::new(data);
+    table
+        .with(Style::markdown())
         .with(Extract::segment(1.., ..))
         .with(Modify::new(Segment::all()).with(Alignment::left()));
 
