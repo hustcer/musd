@@ -68,7 +68,7 @@ jobs:
         target: ${{ matrix.target }}
 
     - name: Setup Nushell
-      uses: hustcer/setup-nu@v3.9
+      uses: hustcer/setup-nu@v3.10
       with:
         version: 0.90.1
       env:
