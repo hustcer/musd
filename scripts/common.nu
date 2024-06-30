@@ -43,7 +43,7 @@ export-env {
 # If current host is Windows
 export def windows? [] {
   # Windows / Darwin
-  (sys).host.name == 'Windows'
+  (sys host | get name) == 'Windows'
 }
 
 # Check if some command available in current shell
@@ -92,7 +92,7 @@ export def compare-ver [
   # Ignore '-beta' or '-rc' suffix
   let v1 = ($source | split row '.' | each {|it| ($it | parse -r '(?P<v>\d+)' | get v | get 0 )})
   let v2 = ($dest | split row '.' | each {|it| ($it | parse -r '(?P<v>\d+)' | get v | get 0 )})
-  for $v in $v1 -n {
+  for $v in ($v1 | enumerate) {
     let c1 = ($v1 | get -i $v.index | default 0 | into int)
     let c2 = ($v2 | get -i $v.index | default 0 | into int)
     if $c1 > $c2 {

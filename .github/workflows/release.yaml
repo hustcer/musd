@@ -68,9 +68,9 @@ jobs:
         target: ${{ matrix.target }}
 
     - name: Setup Nushell
-      uses: hustcer/setup-nu@v3.11
+      uses: hustcer/setup-nu@v3
       with:
-        version: 0.90.1
+        version: 0.95.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
