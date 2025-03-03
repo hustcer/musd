@@ -27,7 +27,7 @@ jobs:
             uri: https://github.com/hustcer/musd/releases/download/v0.2.5/musd-0.2.5-aarch64-unknown-linux-gnu.tar.gz
 
     steps:
-      - uses: uraimo/run-on-arch-action@v2
+      - uses: uraimo/run-on-arch-action@v3
         name: MUSD Release Check
         id: run_musd
         with:
