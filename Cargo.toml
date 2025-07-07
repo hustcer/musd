@@ -19,7 +19,7 @@ documentation = "https://github.com/hustcer/musd/blob/main/README.md"
 clap = { version = "3.1.18", features = ["derive"] }
 dialoguer = { version = "0.11.0", features = ["default"] }
 futures-util = "0.3.30"
-indicatif = { version = "0.17.8" }
+indicatif = { version = "0.18.0" }
 reqwest = { version = "0.12.1", features = ["json", "stream"] }
 shadow-rs = { version = "0.27.0" }
 serde = { version = "1.0.197", features = ["derive"] }
