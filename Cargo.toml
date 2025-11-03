@@ -24,7 +24,7 @@ reqwest = { version = "0.12.1", features = ["json", "stream"] }
 shadow-rs = { version = "0.27.0" }
 serde = { version = "1.0.197", features = ["derive"] }
 serde_json = "1.0.114"
-tabled = "0.15.0"
+tabled = "0.20.0"
 thiserror = "1.0.57"
 tokio = { version = "1.29.1", features = ["full"] }
 url = { version = "2.5.0" }
